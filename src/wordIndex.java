@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 /**
  * Data structure to store strings and their positions.
  */
@@ -42,7 +40,7 @@ public class wordIndex {
 		if (!index.containsKey(word)) {
 			
 			index.putIfAbsent(word, new HashMap<>());
-			index.get(word).add(fileName, position);
+			index.get(word).put(fileName, new TreeSet<Integer>());
 			
 			
 			return true;
@@ -50,7 +48,7 @@ public class wordIndex {
 		
 		// index.get returns a boolean!
 		
-		return index.get(word).add(position);
+		return index.get(word).get(word).add(position);
 		
 		
 		
@@ -91,7 +89,7 @@ public class wordIndex {
 		Boolean added = false;
 		
 		for (String word : words) {
-			added = add(word, position);
+			added = add(word, fileName);
 			position++;
 		}
 	
@@ -147,7 +145,7 @@ public class wordIndex {
 
 		
 		try {
-			return index.get(word).contains(position);
+			return index.get(word).containsKey(position);
 		} catch (NullPointerException e) {
 
 		//	e.printStackTrace();
@@ -191,7 +189,7 @@ public class wordIndex {
 	 * @see ArrayList#ArrayList(java.util.Collection)
 	 * @see Collections#sort(List)
 	 */
-	public ArrayList<Integer> copyPositions(String word) {
+	public ArrayList<Integer> copyPositions(String word, String fileName) {
 		/*
 		 * TODO: Create a copy of the positions for the word, and sort before
 		 * returning.
@@ -199,7 +197,7 @@ public class wordIndex {
 		
 		ArrayList<Integer> list = new ArrayList<>();
 		
-		for (int position : index.get(word)) 
+		for (int position : index.get(word).get(fileName)) 
 			list.add(position);
 		
 		Collections.sort(list);
