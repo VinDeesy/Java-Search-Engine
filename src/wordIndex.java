@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
+import java.nio.file.Path;
 /**
  * Data structure to store strings and their positions.
  */
@@ -15,8 +15,8 @@ public class wordIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	private TreeMap<String, HashMap<String, TreeSet<Integer>>> index;
-	private int position;
+	public TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	public int position;
 	/**
 	 * Initializes the index.
 	 */
@@ -35,20 +35,25 @@ public class wordIndex {
 	 */
 	public boolean add(String word, String fileName) {
 		
-		System.out.println("Adding: " + word);
+	//	System.out.println("Adding: " + word);
 		
 		if (!index.containsKey(word)) {
 			
-			index.putIfAbsent(word, new HashMap<>());
+			index.putIfAbsent(word, new TreeMap<>());
 			index.get(word).put(fileName, new TreeSet<Integer>());
-			
+			index.get(word).get(fileName).add(position);
 			
 			return true;
 		}
 		
+		else if (!index.get(word).containsKey(fileName)) {
+			index.get(word).put(fileName, new TreeSet<Integer>());
+			index.get(word).get(fileName).add(position);
+		}
+		
 		// index.get returns a boolean!
 		
-		return index.get(word).get(word).add(position);
+		return index.get(word).get(fileName).add(position);
 		
 		
 		
@@ -68,7 +73,7 @@ public class wordIndex {
 	public boolean addAll(String[] words, Path fileName) {
 	
 		
-		return addAll(words, fileName);
+		return addAll(words, fileName.toString());
 	}
 
 	/**

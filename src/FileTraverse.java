@@ -92,7 +92,7 @@ public class FileTraverse {
 			traverse("- ", directory);
 		} else {
 			
-			System.out.println(directory.getFileName());
+		//	System.out.println(directory.getFileName());
 		}
 	}
 	

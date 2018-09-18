@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -7,9 +8,11 @@ import java.util.List;
 
 public class FileSearch {
 	wordIndex index;
-	
-	public FileSearch() {
+	Path output;
+	public FileSearch(Path output) {
 		this.index = new wordIndex();
+		this.output = output;
+		
 	}
 	
 	public void search(Path path) {
@@ -20,8 +23,11 @@ public class FileSearch {
 				path, StandardCharsets.UTF_8
 				);
 		
+		BufferedWriter writer = Files
+				.newBufferedWriter(output, StandardCharsets.UTF_8);
+		
 		String line = null;
-		String[] words = null;
+		String[] words;
 		
 		while ((line = reader.readLine()) != null) {
 			line.replaceAll("(?U)[^\\p{Alpha}\\p{Space}]+", "");
@@ -36,13 +42,18 @@ public class FileSearch {
 			
 			
 		}
+	
+		TreeJSONWriter.asNestedObject(index.index, writer, 1);
+		index.position = 1;
 		
-		System.out.println(index.toString());
 		
 	}catch(IOException e) {
 		
 	}
 		
 	} 
+	
+	public wordIndex getIndex() { return this.index;}
+	
 	
 }

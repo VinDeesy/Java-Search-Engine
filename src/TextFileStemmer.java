@@ -154,7 +154,7 @@ public class TextFileStemmer {
 
 		Files.createDirectories(Paths.get("out"));
 
-		System.out.println(inputPath);
+	//	System.out.println(inputPath);
 		stemFile(inputPath, outputPath);
 		
 		
