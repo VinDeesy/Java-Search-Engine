@@ -30,6 +30,10 @@ public class Driver {
 		if (args.length == 0)
 			return;
 		
+
+		
+		
+		
 		
 		Path path;
 		Path output = null;
@@ -38,6 +42,7 @@ public class Driver {
 		Map<String, String> map = new TreeMap<>(); 
 		
 		parser.parse(args);
+		
 		Files.deleteIfExists(Paths.get("index.json"));
 
 		  if (!parser.hasFlag("-index")) {
@@ -72,15 +77,27 @@ public class Driver {
 		
 		
 
-		System.out.println("path is: " + path.toString());
-		System.out.println("output file is: " + output.toString());
+//		System.out.println("path is: " + path.toString());
+//		System.out.println("output file is: " + output.toString());
 		
+//		path = Paths.get("test.txt");
+//		output = Paths.get("out.txt");
 		
+	//	Files.createDirectories(output);
+		
+//		
+//		if (Files.exists(output))
+//				System.out.println("yeah, output exists");
 		
 		FileTraverse trav = new FileTraverse(path);
 		FileSearch searcher = new FileSearch(output);
 		
+		
+		
 		String lower = path.toString().toLowerCase();
+		
+
+		
 		
 		if (lower.endsWith(".txt") || lower.endsWith(".json") || lower.endsWith(".text")) {
 			System.out.println("not directory");
@@ -100,7 +117,7 @@ public class Driver {
 		
 		
 		for (Path pa : list) {
-			System.out.println("tse" + pa.toString());
+		//	System.out.println("tse" + pa.toString());
 			searcher.search(pa);
 		}
 		
@@ -108,7 +125,7 @@ public class Driver {
 		
 		}
 		
-		wordIndex index = searcher.getIndex();
+
 		
 		
 	}
