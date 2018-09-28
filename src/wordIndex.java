@@ -86,10 +86,6 @@ public class wordIndex {
 	 *         or more words or positions were added to the index)
 	 */
 	public boolean addAll(String[] words, String fileName) {
-		/*
-		 * TODO: Add each word using the start position. (You can call your other
-		 * methods here.)
-		 */
 		
 		Boolean added = false;
 		

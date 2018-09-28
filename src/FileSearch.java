@@ -5,16 +5,19 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.TreeMap;
 
 public class FileSearch {
 	wordIndex index;
 	Path output;
+	TreeMap<String, Integer> locations;
+	
 	public FileSearch(Path output) {
 		this.index = new wordIndex();
 		this.output = output;
-		
+		locations = new TreeMap<>();
 	}
-	
+	 
 	public void search(Path path) {
 		
 		 
