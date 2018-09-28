@@ -5,17 +5,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
+
 public class ArgParser {
 	
 	
 	private final Map<String, String> map;
-	int numFlags;
+
 	/**
 	 * Initializes this argument map.
 	 */
 	public ArgParser() {
 		this.map = new TreeMap<String, String>(); 
-		numFlags = 0;
+
 	}
 
 	/**
@@ -47,19 +48,16 @@ public class ArgParser {
 		for (i = 0; i < length - 1; i++) {
 			if (args[i].startsWith("-") && !args[i + 1].startsWith("-")) {
 				if(!map.containsKey(args[i]))
-					numFlags++;
 				map.put(args[i], args[i + 1]);
 			}
 			else if (args[i].startsWith("-") && args[i].startsWith("-")) {
 				if(!map.containsKey(args[i]))
-					numFlags++;
 				map.put(args[i], null);
 			}
 		}
 		
 		if(args[i].startsWith("-")) {
 			if(!map.containsKey(args[i]))
-				numFlags++;
 			map.put(args[i], null);
 		}
 
@@ -118,7 +116,7 @@ public class ArgParser {
 	 */
 	public int numFlags() {
 
-		return numFlags;
+		return map.size();
 
 	}
 

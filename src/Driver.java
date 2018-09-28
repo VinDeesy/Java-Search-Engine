@@ -3,9 +3,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -29,14 +26,8 @@ public class Driver {
 
 		if (args.length == 0)
 			return;
-		
 
 		
-		
-		
-		
-		Path path;
-		Path output = null;
 		ArgParser parser = new ArgParser();
 		
 		Map<String, String> map = new TreeMap<>(); 
@@ -49,12 +40,12 @@ public class Driver {
 			  return;
 		  }
 		
-		
+		  Path path;
+		  Path output = null;
+		  
+		  
 		if (!parser.hasValue("-index") && parser.hasFlag("-index")) {
-			System.out.println("No output path specified, creating json.txt");
 			
-			System.out.println("AWIDJIAWJDIAJWILDJIAWD");
-			System.out.println("json was created: " + Files.createFile(Paths.get("index.json")));
 			output = Paths.get("index.json");
 
 		}
@@ -75,19 +66,7 @@ public class Driver {
 			path = Paths.get(parser.getString("-path"));
 		}
 		
-		
-
-//		System.out.println("path is: " + path.toString());
-//		System.out.println("output file is: " + output.toString());
-		
-//		path = Paths.get("test.txt");
-//		output = Paths.get("out.txt");
-		
-	//	Files.createDirectories(output);
-		
-//		
-//		if (Files.exists(output))
-//				System.out.println("yeah, output exists");
+		System.out.println("yeah, output exists");
 		
 		FileTraverse trav = new FileTraverse(path);
 		FileSearch searcher = new FileSearch(output);
@@ -95,9 +74,7 @@ public class Driver {
 		
 		
 		String lower = path.toString().toLowerCase();
-		
-
-		
+			
 		
 		if (lower.endsWith(".txt") || lower.endsWith(".json") || lower.endsWith(".text")) {
 			System.out.println("not directory");
@@ -110,14 +87,9 @@ public class Driver {
 		trav.traverse(path);
 		ArrayList<Path> list = trav.getPaths();
 		
-
-		
-
-
-		
+	
 		
 		for (Path pa : list) {
-		//	System.out.println("tse" + pa.toString());
 			searcher.search(pa);
 		}
 		
