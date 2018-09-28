@@ -21,11 +21,8 @@ public class FileSearch {
 	public void search(Path path) {
 		
 		 
-		try {
-		BufferedReader reader = Files.newBufferedReader(
-				path, StandardCharsets.UTF_8
-				);
-		
+		try ( BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
+		{
 		BufferedWriter writer = Files
 				.newBufferedWriter(output, StandardCharsets.UTF_8);
 		
@@ -51,7 +48,7 @@ public class FileSearch {
 		
 		
 	}catch(IOException e) {
-
+		e.toString();
 	}
 		
 	} 
