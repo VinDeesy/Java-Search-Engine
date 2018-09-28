@@ -46,7 +46,7 @@ public class FileSearch {
 			
 			
 		}
-	
+		System.out.println("num words is: " + numWords);
 		locations.put(path.toString(), numWords);
 		TreeJSONWriter.asNestedObject(index.index, writer, 1);
 		index.position = 1;

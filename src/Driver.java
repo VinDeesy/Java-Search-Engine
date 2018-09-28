@@ -3,9 +3,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -30,8 +27,7 @@ public class Driver {
 		if (args.length == 0)
 			return;
 
-		Path path;
-		Path output = null;
+		
 		ArgParser parser = new ArgParser();
 		
 		Map<String, String> map = new TreeMap<>(); 
@@ -44,7 +40,10 @@ public class Driver {
 			  return;
 		  }
 		
-		
+		  Path path;
+		  Path output = null;
+		  
+		  
 		if (!parser.hasValue("-index") && parser.hasFlag("-index")) {
 			
 			output = Paths.get("index.json");
