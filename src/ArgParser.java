@@ -5,11 +5,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-
 public class ArgParser {
 	
 	
 	private final Map<String, String> map;
+
+	private int numFlags; // TODO Always decide if its private or public (can also remove it)
+
 
 	/**
 	 * Initializes this argument map.
@@ -85,6 +87,14 @@ public class ArgParser {
 		
 		return arg.startsWith("-");
 
+		/* TODO
+		if (arg == null) {
+			return false;
+		}
+		
+		arg = arg.trim();
+		return arg.length() > 1 && arg.startsWith("-");
+		*/
 	}
 
 	/**
@@ -100,7 +110,7 @@ public class ArgParser {
 	 * @see String#length()
 	 */
 	public static boolean isValue(String arg) {
-		
+		// TODO Try to restructure?
 		if (arg == null || arg.length() < 1)
 			return false;
 
@@ -116,7 +126,9 @@ public class ArgParser {
 	 */
 	public int numFlags() {
 
+
 		return map.size();
+
 
 	}
 
@@ -141,6 +153,7 @@ public class ArgParser {
 	 */
 	public boolean hasValue(String flag) {
 
+		// TODO return map.get(flag) != null;
 		return map.get(flag) == null ? false : true;
 		
 	}
