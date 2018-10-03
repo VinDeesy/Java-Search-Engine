@@ -90,11 +90,14 @@ public class FileTraverse {
 	public void traverse(Path directory) throws IOException {
 		if (Files.isDirectory(directory)) {
 			traverse("- ", directory);
-		} else {
-			
-		//	System.out.println(directory.getFileName());
+		} else if (Files.exists(directory)) {
+				fileList.add(directory);
+			}
+				else {
+					System.out.println("The Path: " + directory.toString() + " does not exist");
+				}
 		}
-	}
+	
 	
 	public ArrayList<Path> getPaths() { return fileList; }
 

@@ -1,10 +1,16 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+
+
 
 // TODO Remove old TODO comments
 // TODO Address warnings for your "production release"
@@ -37,12 +43,10 @@ public class Driver {
 	public static void main(String[] args) throws IOException {
 		
 		// TODO Never use the 1-line if statement style, always use curly braces
-		if (args.length == 0)
+		if (args.length == 0) {
 			return;
-
+		}
 		ArgParser parser = new ArgParser();
-		
-		Map<String, String> map = new TreeMap<>(); 
 		
 		parser.parse(args);
 		
@@ -63,69 +67,56 @@ public class Driver {
 		 * }
 		 */
 		
-		Files.deleteIfExists(Paths.get("index.json"));
-
-		  if (!parser.hasFlag("-index")) {
-			  return;
-		  }
 		
-		  Path path;
-		  Path output = null;
-		  
-		  
-		if (!parser.hasValue("-index") && parser.hasFlag("-index")) {
-			
-			output = Paths.get("index.json");
-
-		}
-		else if (parser.getString("-index").toLowerCase().endsWith(".txt") || parser.getString("-index").toLowerCase().endsWith(".json")) {
-			output = Paths.get(parser.getString("-index"));
-		}
-		else
-			output = Paths.get(parser.getString("-index"));
-
+		Path inputPath;
 		
 		if (!parser.hasValue("-path")) {
-			System.out.println("No path specificied, using current directory");
 
-			 path = Paths.get(".").toAbsolutePath().normalize();
+			System.out.println("No path specified, exiting...");
 			return;
 		}
 		else {
-			path = Paths.get(parser.getString("-path"));
+			inputPath = Paths.get(parser.getString("-path"));
+			System.out.println("input path is: " + inputPath.toAbsolutePath());
 		}
 		
-		System.out.println("yeah, output exists");
+		FileTraverse traverser = new FileTraverse(inputPath);
+		traverser.traverse(inputPath);
 		
-		FileTraverse trav = new FileTraverse(path);
-		FileSearch searcher = new FileSearch(output);
+		ArrayList<Path> pathList = traverser.getPaths();
 		
+		FileSearch searcher = new FileSearch();
 		
-		
-		String lower = path.toString().toLowerCase();
+		for (Path path : pathList) {
+			searcher.search(path); 
 			
-		
-		if (lower.endsWith(".txt") || lower.endsWith(".json") || lower.endsWith(".text")) {
-			System.out.println("not directory");
-			searcher.search(path);
 		}
 		
-		else {
+		Path outputPath;
 		
+		if (parser.hasFlag("-index")) {
 		
-		trav.traverse(path);
-		ArrayList<Path> list = trav.getPaths();
-		
-	
-		
-		for (Path pa : list) {
-			searcher.search(pa);
+			if (!parser.hasValue("-index")) {
+				Files.deleteIfExists(Paths.get("index.json"));
+				outputPath = Paths.get("index.json");
+				System.out.println("Created?: " + Files.exists(outputPath));
+				
+			}
+			else {
+				outputPath = Paths.get(parser.getString("-index"));
+			}
+			
+				
+			try ( BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);) {
+				
+				TreeJSONWriter.asNestedObject(searcher.index.index, writer, 1);
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
+
 		}
-		
-		
-		
-		}
-		
 
 		
 		

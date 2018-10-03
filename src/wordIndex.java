@@ -35,7 +35,7 @@ public class wordIndex {
 	 */
 	public boolean add(String word, String fileName) {
 		
-	//	System.out.println("Adding: " + word);
+
 		
 		if (!index.containsKey(word)) {
 			
