@@ -4,27 +4,24 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
 
-
 public class ArgParser {
-	
-	
+
 	private final Map<String, String> map;
 
 	private int numFlags; // TODO Always decide if its private or public (can also remove it)
-
 
 	/**
 	 * Initializes this argument map.
 	 */
 	public ArgParser() {
-		this.map = new TreeMap<String, String>(); 
+		this.map = new TreeMap<String, String>();
 
 	}
 
 	/**
-	 * Initializes this argument map and then parsers the arguments into
-	 * flag/value pairs where possible. Some flags may not have associated values.
-	 * If a flag is repeated, its value is overwritten.
+	 * Initializes this argument map and then parsers the arguments into flag/value
+	 * pairs where possible. Some flags may not have associated values. If a flag is
+	 * repeated, its value is overwritten.
 	 *
 	 * @param args
 	 */
@@ -34,33 +31,31 @@ public class ArgParser {
 	}
 
 	/**
-	 * Parses the arguments into flag/value pairs where possible. Some flags may
-	 * not have associated values. If a flag is repeated, its value is
-	 * overwritten.
+	 * Parses the arguments into flag/value pairs where possible. Some flags may not
+	 * have associated values. If a flag is repeated, its value is overwritten.
 	 *
 	 * @param args the command line arguments to parse
 	 */
 	public void parse(String[] args) {
-		
+
 		int length = args.length;
-		if (length == 0) 
+		if (length == 0)
 			return;
-		
+
 		int i = 0;
 		for (i = 0; i < length - 1; i++) {
 			if (args[i].startsWith("-") && !args[i + 1].startsWith("-")) {
-				if(!map.containsKey(args[i]))
-				map.put(args[i], args[i + 1]);
-			}
-			else if (args[i].startsWith("-") && args[i].startsWith("-")) {
-				if(!map.containsKey(args[i]))
-				map.put(args[i], null);
+				if (!map.containsKey(args[i]))
+					map.put(args[i], args[i + 1]);
+			} else if (args[i].startsWith("-") && args[i].startsWith("-")) {
+				if (!map.containsKey(args[i]))
+					map.put(args[i], null);
 			}
 		}
-		
-		if(args[i].startsWith("-")) {
-			if(!map.containsKey(args[i]))
-			map.put(args[i], null);
+
+		if (args[i].startsWith("-")) {
+			if (!map.containsKey(args[i]))
+				map.put(args[i], null);
 		}
 
 	}
@@ -78,23 +73,20 @@ public class ArgParser {
 	 * @see String#length()
 	 */
 	public static boolean isFlag(String arg) {
-		
+
 		if (arg == null || arg.length() <= 1)
 			return false;
-		
-			else if (Character.isWhitespace(arg.charAt(1)))
-						return false;
-		
+
+		else if (Character.isWhitespace(arg.charAt(1)))
+			return false;
+
 		return arg.startsWith("-");
 
-		/* TODO
-		if (arg == null) {
-			return false;
-		}
-		
-		arg = arg.trim();
-		return arg.length() > 1 && arg.startsWith("-");
-		*/
+		/*
+		 * TODO if (arg == null) { return false; }
+		 * 
+		 * arg = arg.trim(); return arg.length() > 1 && arg.startsWith("-");
+		 */
 	}
 
 	/**
@@ -114,7 +106,6 @@ public class ArgParser {
 		if (arg == null || arg.length() < 1)
 			return false;
 
-		
 		return (!arg.startsWith("-") && !Character.isWhitespace(arg.charAt(0)));
 
 	}
@@ -126,9 +117,7 @@ public class ArgParser {
 	 */
 	public int numFlags() {
 
-
 		return map.size();
-
 
 	}
 
@@ -139,7 +128,6 @@ public class ArgParser {
 	 * @return {@code true} if the flag exists
 	 */
 	public boolean hasFlag(String flag) {
-
 
 		return map.containsKey(flag);
 
@@ -154,13 +142,13 @@ public class ArgParser {
 	public boolean hasValue(String flag) {
 
 		// TODO return map.get(flag) != null;
-		return map.get(flag) == null ? false : true;
-		
+		return map.get(flag) != null;
+
 	}
 
 	/**
-	 * Returns the value to which the specified flag is mapped as a
-	 * {@link String}, or null if there is no mapping for the flag.
+	 * Returns the value to which the specified flag is mapped as a {@link String},
+	 * or null if there is no mapping for the flag.
 	 *
 	 * @param flag the flag whose associated value is to be returned
 	 * @return the value to which the specified flag is mapped, or {@code null} if
@@ -173,14 +161,14 @@ public class ArgParser {
 	}
 
 	/**
-	 * Returns the value to which the specified flag is mapped as a
-	 * {@link String}, or the default value if there is no mapping for the flag.
+	 * Returns the value to which the specified flag is mapped as a {@link String},
+	 * or the default value if there is no mapping for the flag.
 	 *
 	 * @param flag         the flag whose associated value is to be returned
 	 * @param defaultValue the default value to return if there is no mapping for
 	 *                     the flag
-	 * @return the value to which the specified flag is mapped, or the default
-	 *         value if there is no mapping for the flag
+	 * @return the value to which the specified flag is mapped, or the default value
+	 *         if there is no mapping for the flag
 	 */
 	public String getString(String flag, String defaultValue) {
 
@@ -189,10 +177,10 @@ public class ArgParser {
 	}
 
 	/**
-	 * Returns the value to which the specified flag is mapped as a {@link Path},
-	 * or {@code null} if unable to retrieve this mapping for any reason
-	 * (including being unable to convert the value to a {@link Path} or no value
-	 * existing for this flag).
+	 * Returns the value to which the specified flag is mapped as a {@link Path}, or
+	 * {@code null} if unable to retrieve this mapping for any reason (including
+	 * being unable to convert the value to a {@link Path} or no value existing for
+	 * this flag).
 	 *
 	 * This method should not throw any exceptions!
 	 *
@@ -203,24 +191,21 @@ public class ArgParser {
 	 * @see Paths#get(String, String...)
 	 */
 	public Path getPath(String flag) {
-		
 
-		try {	
-			
+		try {
+
 			return Paths.get(map.get(flag));
-			
-		}
-		catch (InvalidPathException | NullPointerException np) {
+
+		} catch (InvalidPathException | NullPointerException np) {
 			System.out.println("error: " + np.getMessage());
 			return null;
 		}
-		
-	
+
 	}
 
 	/**
-	 * Returns the value to which the specified flag is mapped as a {@link Path},
-	 * or the default value if unable to retrieve this mapping for any reason
+	 * Returns the value to which the specified flag is mapped as a {@link Path}, or
+	 * the default value if unable to retrieve this mapping for any reason
 	 * (including being unable to convert the value to a {@link Path} or no value
 	 * existing for this flag).
 	 *
@@ -229,27 +214,22 @@ public class ArgParser {
 	 * @param flag         the flag whose associated value is to be returned
 	 * @param defaultValue the default value to return if there is no mapping for
 	 *                     the flag
-	 * @return the value to which the specified flag is mapped as a {@link Path},
-	 *         or the default value if there is no mapping for the flag
+	 * @return the value to which the specified flag is mapped as a {@link Path}, or
+	 *         the default value if there is no mapping for the flag
 	 */
 	public Path getPath(String flag, Path defaultValue) {
 
-			
-			try {
+		try {
 
-				return Paths.get(map.get(flag));
-			
-			}
-			catch (InvalidPathException e) {
-				return defaultValue;
-			}
+			return Paths.get(map.get(flag));
+
+		} catch (InvalidPathException e) {
+			return defaultValue;
 		}
-
-	
+	}
 
 	@Override
 	public String toString() {
 		return this.map.toString();
 	}
 }
-

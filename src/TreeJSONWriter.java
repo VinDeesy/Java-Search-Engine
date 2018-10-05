@@ -5,10 +5,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -145,16 +142,16 @@ public class TreeJSONWriter {
 
 				
 
-//				entry.getValue().keySet().toArray(new String[] paths);
+
 
 				
 				
 				int size = entry.getValue().size();
-	//			System.out.println("size is: " + size);
+
 				int count = 1;
 				
 				String fileName = file.getKey();
-		//		System.out.println("Key is: " + fileName);
+
 				TreeSet<Integer> set = file.getValue();
 				
 
