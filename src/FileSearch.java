@@ -7,50 +7,47 @@ import java.util.List;
 
 public class FileSearch {
 	wordIndex index;
+	Integer numWords;
 
-	
 	public FileSearch() {
 		this.index = new wordIndex();
-
+		this.numWords = 0;
 
 	}
-	 
+
 	public void search(Path path) {
-		
-		try ( BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
-		
+
+		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
+
 		{
 
-			
-			
-			
-		String line = null;
-		String[] words;
-		
-		while ((line = reader.readLine()) != null) {
+			String line = null;
+			String[] words = null;
 
-			line.replaceAll("(?U)[^\\p{Alpha}\\p{Space}]+", "");
-			line.toLowerCase();
-			words = line.split("(?U)[^\\p{Alpha}\\p{Space}]+");
-			
-			
-			
-			List<String> stemmed = TextFileStemmer.stemLine(line);
+			while ((line = reader.readLine()) != null) {
 
-			index.addAll(stemmed.toArray(new String[stemmed.size()]), path);
-			
-			
+				line.replaceAll("(?U)[^\\p{Alpha}\\p{Space}]+", "");
+				line.toLowerCase();
+				words = line.split("(?U)[^\\p{Alpha}\\p{Space}]+");
+
+				List<String> stemmed = TextFileStemmer.stemLine(line);
+
+				index.addAll(stemmed.toArray(new String[stemmed.size()]), path);
+
+				numWords += stemmed.size();
+			}
+			index.position = 1;
+			index.locations.put(path.toString(), numWords);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+
 		}
-		index.position = 1;
-		
-		
-	}catch(IOException e) {
-		e.printStackTrace();;
+
 	}
-		
-	} 
-	
-	public wordIndex getIndex() { return this.index; }
-	
-	
+
+	public wordIndex getIndex() {
+		return this.index;
+	}
+
 }

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
 /**
  * Data structure to store strings and their positions.
  */
@@ -14,13 +15,15 @@ public class wordIndex {
 	 */
 	public TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	public int position;
+	public TreeMap<String, Integer> locations;
+
 	/**
 	 * Initializes the index.
 	 */
 	public wordIndex() {
 		this.index = new TreeMap<>();
 		this.position = 1;
-		
+		this.locations = new TreeMap<>();
 	}
 
 	/**
@@ -31,30 +34,25 @@ public class wordIndex {
 	 * @return true if this index did not already contain this word and position
 	 */
 	public boolean add(String word, String fileName) {
-		
 
-		
 		if (!index.containsKey(word)) {
-			
+
 			index.putIfAbsent(word, new TreeMap<>());
 			index.get(word).put(fileName, new TreeSet<Integer>());
 			index.get(word).get(fileName).add(position);
-			
+
 			return true;
 		}
-		
+
 		else if (!index.get(word).containsKey(fileName)) {
 			index.get(word).put(fileName, new TreeSet<Integer>());
 			index.get(word).get(fileName).add(position);
 		}
-		
+
 		// index.get returns a boolean!
-		
+
 		return index.get(word).get(fileName).add(position);
-		
-		
-		
-		
+
 	}
 
 	/**
@@ -62,14 +60,13 @@ public class wordIndex {
 	 * position 1.
 	 *
 	 * @param words array of words to add
-	 * @return true if this index is changed as a result of the call (i.e. if one
-	 *         or more words or positions were added to the index)
+	 * @return true if this index is changed as a result of the call (i.e. if one or
+	 *         more words or positions were added to the index)
 	 *
 	 * @see #addAll(String[], int)
 	 */
 	public boolean addAll(String[] words, Path fileName) {
-	
-		
+
 		return addAll(words, fileName.toString());
 	}
 
@@ -79,18 +76,18 @@ public class wordIndex {
 	 *
 	 * @param words array of words to add
 	 * @param start starting position
-	 * @return true if this index is changed as a result of the call (i.e. if one
-	 *         or more words or positions were added to the index)
+	 * @return true if this index is changed as a result of the call (i.e. if one or
+	 *         more words or positions were added to the index)
 	 */
 	public boolean addAll(String[] words, String fileName) {
-		
+
 		Boolean added = false;
-		
+
 		for (String word : words) {
 			added = add(word, fileName);
 			position++;
 		}
-	
+
 		return added;
 	}
 
@@ -141,12 +138,11 @@ public class wordIndex {
 	 */
 	public boolean contains(String word, int position) {
 
-		
 		try {
 			return index.get(word).containsKey(position);
 		} catch (NullPointerException e) {
 
-		//	e.printStackTrace();
+			// e.printStackTrace();
 			return false;
 		}
 
@@ -165,18 +161,16 @@ public class wordIndex {
 		 * TODO: Create a copy of the words in the index as a list, and sort before
 		 * returning.
 		 */
-		
+
 		ArrayList<String> list = new ArrayList<>();
-		
-		for (String word : index.keySet()) 
+
+		for (String word : index.keySet())
 			list.add(word);
-		
 
 		Collections.sort(list);
 		return list;
-		
+
 	}
-	
 
 	/**
 	 * Returns a copy of the positions for a specific word.
@@ -189,15 +183,14 @@ public class wordIndex {
 	 */
 	public ArrayList<Integer> copyPositions(String word, String fileName) {
 		/*
-		 * TODO: Create a copy of the positions for the word, and sort before
-		 * returning.
+		 * TODO: Create a copy of the positions for the word, and sort before returning.
 		 */
-		
+
 		ArrayList<Integer> list = new ArrayList<>();
-		
-		for (int position : index.get(word).get(fileName)) 
+
+		for (int position : index.get(word).get(fileName))
 			list.add(position);
-		
+
 		Collections.sort(list);
 		return list;
 	}
@@ -209,12 +202,9 @@ public class wordIndex {
 	public String toString() {
 		return this.index.toString();
 	}
-	
+
 	public void print() {
-		
-		
-		
-		
+
 	}
-	
+
 }

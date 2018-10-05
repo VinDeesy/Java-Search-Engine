@@ -141,7 +141,6 @@ public class ArgParser {
 	 */
 	public boolean hasValue(String flag) {
 
-		// TODO return map.get(flag) != null;
 		return map.get(flag) != null;
 
 	}
