@@ -37,8 +37,11 @@ public class FileSearch {
 				numWords += stemmed.size();
 			}
 			index.position = 1;
-			index.locations.put(path.toString(), numWords);
+			if (numWords > 0) {
+				index.locations.put(path.toString(), numWords);
+			}
 
+			numWords = 0;
 		} catch (IOException e) {
 			e.printStackTrace();
 
