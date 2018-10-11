@@ -1,99 +1,88 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class QuerySearch {
+	public TreeMap<String, ArrayList<Result>> results;
+	public TreeMap<String, ArrayList<Result>> map;
+	public TreeMap<String, Integer> fileMap;
+	public TreeMap<String, Integer> indexMap;
+	// Mapping:
 
 	public QuerySearch() {
 
 	}
 
-	public ArrayList<Result> search(TreeMap<String, TreeMap<String, TreeSet<Integer>>> index,
+	public TreeMap<String, ArrayList<Result>> search(TreeMap<String, TreeMap<String, TreeSet<Integer>>> index,
 			ArrayList<TreeSet<String>> queries) {
 
-		// TreeMap<String, Integer> map = new TreeMap<>();
-		ArrayList<ArrayList<Result>> results = new ArrayList<>();
-		double score = 0.0;
+		results = new TreeMap<>();
+
 		int i = 0;
+		ArrayList<Result> resultList = new ArrayList<>();
+		for (TreeSet<String> q : queries) {
 
-		ArrayList<Result> res = new ArrayList<>();
+			String fullQuery = Arrays.toString(q.toArray(new String[q.size()]));
 
-		boolean found = false;
-
-		String fileName;
-		Integer numOccurences = 0;
-		Integer total = 0;
-
-		HashMap<String, Integer> m = new HashMap<>();
-
-		for (TreeSet<String> tSet : queries) {
-
-			results.add(new ArrayList<Result>());
-
-			Result r = new Result(0, null, tSet);
-
-			for (String word : tSet) {
+			for (String word : q) {
 
 				if (index.containsKey(word)) {
-					found = true;
 
-					TreeMap<String, TreeSet<Integer>> map = index.get(word);
+					for (Entry<String, TreeSet<Integer>> file : index.get(word).entrySet()) {
 
-					for (Entry<String, TreeSet<Integer>> file : map.entrySet()) {
+						resultList.add(new Result(file.getValue().size(), fullQuery, file.getKey()));
 
-						if (file.getValue().size() > 0) {
-
-							System.out.println("Current query: " + word);
-							System.out.println("File is: " + file.getKey() + " Size is: " + file.getValue().size()
-									+ " Num so far is: " + numOccurences);
-
-							if (r.map.containsKey(file.getKey())) {
-
-								// r.map.put(file.getKey(), r.map.get(file.getKey()) + file.getValue());
-
-								numOccurences += r.map.get(file.getKey());
-							} else {
-								numOccurences = file.getValue().size();
-							}
-
-							r.map.put(file.getKey(), numOccurences);
-
-						}
 					}
-
 				}
 
 			}
-			numOccurences = 0;
-			if (found) {
-				res.add(r);
-			}
-			found = false;
-			i++;
-
-		}
-		Collections.sort(res);
-		for (Result r : res) {
-			System.out.println(r.qString);
-
-			for (Entry<String, Integer> entry : r.map.entrySet()) {
-				System.out.println("File is: " + entry.getKey() + " Num is: " + entry.getValue());
+			if (i == 0) {
+				results.putIfAbsent(fullQuery, resultList);
+				i++;
 			}
 		}
 
-		return res;
+		for (Entry<String, ArrayList<Result>> queryWord : results.entrySet()) {
+
+			System.out.println("Size is: " + queryWord.getValue().size());
+
+			for (Result result : queryWord.getValue()) {
+
+				System.out.println(
+						"the word is: " + result.q + " the file is: " + result.file + " the count is: " + result.count);
+
+			}
+
+		}
+
+		return results;
 	}
 
-	public void getOutput(ArrayList<Result> results, TreeMap<String, Integer> locations) {
+	public void condense(TreeMap<String, ArrayList<Result>> results) {
 
-		for (Result r : results) {
-			r.calc(locations);
+		TreeMap<String, ArrayList<Result>> resultMap = new TreeMap<>();
+		TreeMap<String, Integer> fileMap = new TreeMap<>();
+
+		for (Entry<String, ArrayList<Result>> query : results.entrySet()) {
+
+			// Result r = new Result(0, query.getKey());
+
+			for (Result result : query.getValue()) {
+
+				if (!fileMap.containsKey(result.q)) {
+					fileMap.put(result.q, result.count);
+				} else {
+					int x = fileMap.get(result.q) + result.count;
+					fileMap.put(result.q, x);
+
+				}
+
+				// r.updateCount(fileMap.get(r.q));
+			}
 
 		}
 
 	}
-
 }

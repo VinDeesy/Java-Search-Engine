@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 // TODO Address warnings for your "production release"
@@ -100,7 +101,7 @@ public class Driver {
 		}
 
 		Boolean exact = parser.hasFlag("-exact");
-		ArrayList<Result> results = null;
+		TreeMap<String, ArrayList<Result>> results;
 		if (parser.hasValue("-search")) {
 
 			Path queryFile = Paths.get(parser.getString("-search"));
@@ -110,7 +111,8 @@ public class Driver {
 			try {
 				QuerySearch qs = new QuerySearch();
 				results = qs.search(searcher.index.index, queries);
-				qs.getOutput(results, searcher.index.locations);
+				qs.condense(results);
+				// qs.getOutput(results, searcher.index.locations);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("There was an error with your query file");
@@ -129,7 +131,7 @@ public class Driver {
 			}
 			try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8);) {
 
-				TreeJSONWriter.printSearch(results, writer);
+				// TreeJSONWriter.printSearch(results, writer);
 			} catch (Exception e) {
 
 				System.out.println("Something got fuckedup with printing the results");

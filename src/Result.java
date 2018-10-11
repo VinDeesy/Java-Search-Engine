@@ -1,32 +1,35 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class Result implements Comparable<Result> {
 
 	public int count;
 	public ArrayList<String> fileName;
 	public TreeMap<String, Integer> map;
-	public String[] query;
+	public String file;
 	public String q;
 	String qString;
 
 	ArrayList<ResultOutput> outputs;
 
-	public Result(int count, String fileName, TreeSet<String> set) {
-		this.fileName = new ArrayList<>();
+	public Result(int count, String q, String file) {
+
 		this.count = count;
-		this.query = set.toArray(new String[set.size()]);
+		this.file = file;
 		this.map = new TreeMap<>();
-		this.qString = Arrays.toString(set.toArray(new String[set.size()]));
+
 		this.outputs = new ArrayList<>();
+		this.q = q;
 	}
 
 	public void addFile(String file) {
 		this.fileName.add(file);
+	}
+
+	public void updateCount(int count) {
+		this.count = count;
 	}
 
 	@Override
