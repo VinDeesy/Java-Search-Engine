@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -85,13 +86,14 @@ public class QuerySearch {
 					double score = (double) file.getValue() / locations.get(file.getKey());
 					System.out.println("Score is: " + score);
 
-					Result result = new Result(file.getValue(), q.getKey(), file.getKey());
-
-					calcScore(result);
+					Result result = new Result(file.getValue(), q.getKey(), file.getKey(), score);
 
 					resultList.get(i).add(result);
 
 				}
+
+				Collections.sort(resultList.get(i));
+				resultList.get(i).forEach(System.out.println());
 
 				i++;
 			}
@@ -99,11 +101,6 @@ public class QuerySearch {
 
 		return null;
 
-	}
-
-	public double calcScore(Result result) {
-
-		return 0.0;
 	}
 
 }
