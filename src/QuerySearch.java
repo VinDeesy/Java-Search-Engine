@@ -58,11 +58,15 @@ public class QuerySearch {
 
 					count = 0;
 
+				} else {
+					resultMap.putIfAbsent(queryName, null);
 				}
 
 			}
 
 		}
+
+		ArrayList<ArrayList<Result>> resultList = new ArrayList<>();
 
 		for (Entry<String, TreeMap<String, Integer>> q : resultMap.entrySet()) {
 
@@ -71,6 +75,8 @@ public class QuerySearch {
 			for (Entry<String, Integer> file : q.getValue().entrySet()) {
 
 				System.out.println("File is: " + file.getKey() + " Count is: " + file.getValue());
+
+				Result result = new Result(file.getValue(), q.getKey(), file.getKey());
 
 			}
 
