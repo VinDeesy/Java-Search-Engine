@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 // TODO Address warnings for your "production release"
 
@@ -39,10 +41,11 @@ public class Driver {
 		parser.parse(args);
 
 		Path inputPath;
+		Boolean built = false;
 		FileSearch searcher = new FileSearch();
 		if (parser.hasValue("-path")) {
 			inputPath = Paths.get(parser.getString("-path"));
-			System.out.println("input path is: " + inputPath.toAbsolutePath());
+			// System.out.println("input path is: " + inputPath.toAbsolutePath());
 
 			FileTraverse traverser = new FileTraverse(inputPath);
 			traverser.traverse(inputPath);
@@ -53,9 +56,9 @@ public class Driver {
 				searcher.search(path);
 
 			}
+			built = true;
 		} else {
 			System.out.println("No path specified, exiting...");
-
 		}
 
 		Path outputPath;
@@ -66,8 +69,8 @@ public class Driver {
 				Files.deleteIfExists(Paths.get("index.json"));
 				outputPath = Paths.get("index.json");
 				Files.createFile(outputPath);
-				System.out.println(outputPath.toString());
-				System.out.println("Created?: " + Files.exists(outputPath));
+//				System.out.println(outputPath.toString());
+//				System.out.println("Created?: " + Files.exists(outputPath));
 
 			} else {
 				outputPath = Paths.get(parser.getString("-index"));
@@ -78,11 +81,61 @@ public class Driver {
 
 			} catch (Exception e) {
 				System.out.println("Error io open file: " + outputPath.toString());
-				;
+
 			}
 
 		}
 
-	}
+		Path locations;
+		if (parser.hasFlag("-locations")) {
+			if (parser.hasValue("-locations")) {
+				locations = Paths.get(parser.getString("-locations"));
+			} else {
+				locations = Paths.get("locations.json");
+			}
+			try (BufferedWriter writer = Files.newBufferedWriter(locations, StandardCharsets.UTF_8);) {
+				TreeJSONWriter.printLocations(searcher.index.locations, writer);
+			}
+		} else {
+			System.out.println("No locations flag, not printing locations to file");
+		}
 
+		Boolean exact = parser.hasFlag("-exact");
+		TreeMap<String, ArrayList<Result>> results;
+		if (parser.hasValue("-search")) {
+
+			Path queryFile = Paths.get(parser.getString("-search"));
+			System.out.println("Inputpath for queries is: " + queryFile.toString());
+			ArrayList<TreeSet<String>> queries = Queries.getQueries(queryFile);
+
+			try {
+				QuerySearch qs = new QuerySearch();
+				results = qs.search(searcher.index.index, queries, searcher.index.locations);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("There was an error with your query file");
+			}
+		}
+		Path resultsFile;
+		if (parser.hasFlag("-results")) {
+
+			if (parser.hasValue("-results")) {
+				resultsFile = Paths.get(parser.getString("-results"));
+			} else {
+				resultsFile = Paths.get("results.json");
+				Files.createFile(resultsFile);
+
+				System.out.println("NO result path given, using results.json");
+			}
+			try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8);) {
+
+				// TreeJSONWriter.printSearch(results, writer);
+			} catch (Exception e) {
+
+				System.out.println("Something got fuckedup with printing the results");
+			}
+		}
+
+	}
 }
