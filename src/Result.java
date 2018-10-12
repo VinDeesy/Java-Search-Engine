@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 public class Result implements Comparable<Result> {
@@ -41,25 +39,6 @@ public class Result implements Comparable<Result> {
 
 	public String getqString() {
 		return this.qString;
-	}
-
-	public void calc(TreeMap<String, Integer> locations) {
-
-		for (Entry<String, Integer> entry : this.map.entrySet()) {
-			ResultOutput resultOutput = new ResultOutput(entry.getKey(), qString, entry.getValue());
-			resultOutput.calculcateScore(locations);
-
-			outputs.add(resultOutput);
-
-		} //
-
-		Collections.sort(outputs);
-
-		for (ResultOutput r : outputs) {
-
-			System.out.println("Query is: " + r.query + " Score is: " + r.score);
-		}
-
 	}
 
 }

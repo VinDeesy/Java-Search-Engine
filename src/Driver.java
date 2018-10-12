@@ -110,9 +110,8 @@ public class Driver {
 
 			try {
 				QuerySearch qs = new QuerySearch();
-				results = qs.search(searcher.index.index, queries);
-				// qs.condense(results);
-				// qs.getOutput(results, searcher.index.locations);
+				results = qs.search(searcher.index.index, queries, searcher.index.locations);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("There was an error with your query file");

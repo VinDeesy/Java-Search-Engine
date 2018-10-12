@@ -17,7 +17,7 @@ public class QuerySearch {
 	}
 
 	public TreeMap<String, ArrayList<Result>> search(TreeMap<String, TreeMap<String, TreeSet<Integer>>> index,
-			ArrayList<TreeSet<String>> queries) {
+			ArrayList<TreeSet<String>> queries, TreeMap<String, Integer> locations) {
 
 		for (TreeSet<String> query : queries) {
 
@@ -82,15 +82,28 @@ public class QuerySearch {
 
 					System.out.println("File is: " + file.getKey() + " Count is: " + file.getValue());
 
+					double score = (double) file.getValue() / locations.get(file.getKey());
+					System.out.println("Score is: " + score);
+
 					Result result = new Result(file.getValue(), q.getKey(), file.getKey());
 
+					calcScore(result);
+
 					resultList.get(i).add(result);
+
 				}
 
 				i++;
 			}
 		}
+
 		return null;
 
 	}
+
+	public double calcScore(Result result) {
+
+		return 0.0;
+	}
+
 }
