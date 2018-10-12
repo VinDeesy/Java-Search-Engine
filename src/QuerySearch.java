@@ -59,12 +59,14 @@ public class QuerySearch {
 					count = 0;
 
 				} else {
-					resultMap.putIfAbsent(queryName, null);
+					// resultMap.putIfAbsent(queryName, null);
 				}
 
 			}
 
 		}
+
+		int i = 0;
 
 		ArrayList<ArrayList<Result>> resultList = new ArrayList<>();
 
@@ -72,16 +74,22 @@ public class QuerySearch {
 
 			System.out.println("Query is: " + q.getKey());
 
-			for (Entry<String, Integer> file : q.getValue().entrySet()) {
+			resultList.add(new ArrayList<>());
 
-				System.out.println("File is: " + file.getKey() + " Count is: " + file.getValue());
+			if (q.getValue() != null) {
 
-				Result result = new Result(file.getValue(), q.getKey(), file.getKey());
+				for (Entry<String, Integer> file : q.getValue().entrySet()) {
 
+					System.out.println("File is: " + file.getKey() + " Count is: " + file.getValue());
+
+					Result result = new Result(file.getValue(), q.getKey(), file.getKey());
+
+					resultList.get(i).add(result);
+				}
+
+				i++;
 			}
-
 		}
-
 		return null;
 
 	}
