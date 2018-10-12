@@ -9,7 +9,7 @@ public class Result implements Comparable<Result> {
 	public ArrayList<String> fileName;
 	public TreeMap<String, Integer> map;
 	public String file;
-	public String q;
+	public String query;
 	String qString;
 
 	ArrayList<ResultOutput> outputs;
@@ -21,7 +21,7 @@ public class Result implements Comparable<Result> {
 		this.map = new TreeMap<>();
 
 		this.outputs = new ArrayList<>();
-		this.q = q;
+		this.query = q;
 	}
 
 	public void addFile(String file) {

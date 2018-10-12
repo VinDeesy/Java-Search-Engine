@@ -111,7 +111,7 @@ public class Driver {
 			try {
 				QuerySearch qs = new QuerySearch();
 				results = qs.search(searcher.index.index, queries);
-				qs.condense(results);
+				// qs.condense(results);
 				// qs.getOutput(results, searcher.index.locations);
 			} catch (Exception e) {
 				e.printStackTrace();
