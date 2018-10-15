@@ -213,13 +213,15 @@ public class TreeJSONWriter {
 
 	}
 
-	public static void printSearch(ArrayList<Result> results, BufferedWriter writer) throws IOException {
+	public static void printSearch(ArrayList<ArrayList<Result>> results, BufferedWriter writer) throws IOException {
+
+		System.out.println("AWDILAWDAWJD");
 
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 
 		writer.write("[");
 
-		if (results.isEmpty()) {
+		if (results == null || results.isEmpty()) {
 			writer.write(System.lineSeparator() + "]");
 		}
 
@@ -228,66 +230,83 @@ public class TreeJSONWriter {
 			indent(1, writer);
 			writer.write("{");
 			writer.write(System.lineSeparator());
-			indent(2, writer);
-			quote("queries", writer);
-			writer.write(": ");
-			for (Result result : results) {
 
-				quote(result.qString, writer);
-				writer.write(System.lineSeparator());
+			int i = 0;
+
+			for (ArrayList<Result> result : results) {
+
+				indent(2, writer);
+
+				quote("queries", writer);
+				writer.write(": ");
+
+				quote(result.get(i).query, writer);
+				writer.write("," + System.lineSeparator());
 				indent(2, writer);
 				quote("results", writer);
 				writer.write(":");
 				writer.write(" [" + System.lineSeparator());
-				indent(3, writer);
 
-				writer.write("{" + System.lineSeparator());
-
-				for (ResultOutput output : result.outputs) {
-					indent(4, writer);
-					quote("where", writer);
-					writer.write(": ");
-					quote(output.where, writer);
-					writer.write(System.lineSeparator());
-
-					indent(4, writer);
-					quote("count: ", writer);
-
-					writer.write(Double.toString(output.count) + System.lineSeparator());
-					indent(4, writer);
-
-					quote("score: ", writer);
-					writer.write(Double.toString(output.score) + System.lineSeparator());
+				if (result.get(0).count == 0) {
+					indent(2, writer);
+					writer.write("]" + System.lineSeparator());
+				} else {
 
 					indent(3, writer);
-					writer.write("}");
-					writer.write(System.lineSeparator());
 
-					indent(2, writer);
-					writer.write(System.lineSeparator());
-					indent(1, writer);
+					writer.write("{" + System.lineSeparator());
+
+					for (Result fileResult : result) {
+						indent(4, writer);
+						quote("where", writer);
+						writer.write(": ");
+						quote(fileResult.file, writer);
+						writer.write(",");
+						writer.write(System.lineSeparator());
+
+						indent(4, writer);
+						quote("count", writer);
+						writer.write(": ");
+
+						writer.write(fileResult.count + "," + System.lineSeparator());
+						indent(4, writer);
+
+						quote("score", writer);
+						writer.write(": ");
+						writer.write(FORMATTER.format(fileResult.score) + System.lineSeparator());
+
+						indent(3, writer);
+
+						if (result.indexOf(fileResult) == result.size() - 1) {
+							writer.write("}");
+							writer.write(System.lineSeparator());
+							System.out.println("LAST");
+							indent(2, writer);
+							writer.write("]" + System.lineSeparator());
+						} else {
+							writer.write("}," + System.lineSeparator());
+							indent(2, writer);
+							writer.write("{" + System.lineSeparator());
+						}
+
+						// indent(1, writer);
+					}
 				}
-			}
 
-//			Iterator<Result> it = results.iterator();
-//			var r = it.next();
-//			
-//			quote(r.qString, writer);
-//			
-//			if (it.hasNext()) {
-//				writer.write(",");
-//			}
-//	
-//			
-//			
-//			
-//			
-//			while(it.hasNext()) {
-//				
-//				
-//				
-//				
-//			}
+				if (results.indexOf(result) == results.size() - 1) {
+					indent(1, writer);
+					writer.write("}" + System.lineSeparator());
+				} else {
+					indent(1, writer);
+					writer.write("}," + System.lineSeparator());
+					indent(1, writer);
+					writer.write("{" + System.lineSeparator());
+				}
+
+			}
+			writer.write("]");
+
+			i++;
 
 		}
 
