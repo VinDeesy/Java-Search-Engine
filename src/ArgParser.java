@@ -8,8 +8,6 @@ public class ArgParser {
 
 	private final Map<String, String> map;
 
-	private int numFlags; // TODO Always decide if its private or public (can also remove it)
-
 	/**
 	 * Initializes this argument map.
 	 */

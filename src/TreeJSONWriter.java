@@ -280,7 +280,7 @@ public class TreeJSONWriter {
 						if (result.indexOf(fileResult) == result.size() - 1) {
 							writer.write("}");
 							writer.write(System.lineSeparator());
-							System.out.println("LAST");
+
 							indent(2, writer);
 							writer.write("]" + System.lineSeparator());
 						} else {
@@ -289,7 +289,6 @@ public class TreeJSONWriter {
 							writer.write("{" + System.lineSeparator());
 						}
 
-						// indent(1, writer);
 					}
 				}
 

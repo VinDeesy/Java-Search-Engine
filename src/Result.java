@@ -26,11 +26,9 @@ public class Result implements Comparable<Result> {
 
 	@Override
 	public int compareTo(Result other) {
-		// System.out.println("Sorting: " + this.file + " and " + other.file);
 		int c = Double.compare(other.score, this.score);
 
 		if (c == 0) {
-			// System.out.println("Entered count block!!!");
 			c = Integer.compare(other.count, this.count);
 		}
 		if (c == 0) {

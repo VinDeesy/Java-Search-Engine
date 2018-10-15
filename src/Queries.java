@@ -34,10 +34,10 @@ public class Queries {
 			return queries;
 
 		} catch (Exception e) {
-			System.out.println("Uhh oh");
+			System.out.println("There was an error processing the query file");
+			return null;
 		}
 
-		return null;
 	}
 
 }
