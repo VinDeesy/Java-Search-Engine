@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 public class Result implements Comparable<Result> {
 
@@ -8,8 +7,6 @@ public class Result implements Comparable<Result> {
 	public String query;
 	String qString;
 	double score;
-
-	ArrayList<ResultOutput> outputs;
 
 	public Result(int count, String q, String file, double score) {
 
@@ -29,8 +26,16 @@ public class Result implements Comparable<Result> {
 
 	@Override
 	public int compareTo(Result other) {
-		System.out.println("JDJD");
-		int c = this.qString.compareTo(other.qString);
+		// System.out.println("Sorting: " + this.file + " and " + other.file);
+		int c = Double.compare(other.score, this.score);
+
+		if (c == 0) {
+			// System.out.println("Entered count block!!!");
+			c = Integer.compare(other.count, this.count);
+		}
+		if (c == 0) {
+			c = this.file.compareTo(other.file);
+		}
 		return c;
 	}
 
