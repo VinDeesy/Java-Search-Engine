@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+//test
 public class QuerySearch {
 
 	public TreeMap<String, TreeMap<String, Integer>> resultMap = new TreeMap<>();
