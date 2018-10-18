@@ -45,6 +45,8 @@ public class TextFileStemmer {
 		String[] cleaned = TextParser.parse(line);
 
 		for (String string : cleaned) {
+			// TODO Avoid downcasting
+			// TODO list.add(stemmer.stem(string).toString());
 			list.add((String) stemmer.stem(string));
 		}
 

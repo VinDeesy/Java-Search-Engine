@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+// TODO Job title, FileTraverser
+
 /**
  * This class demonstrates how to use a {@link DirectoryStream} to create a
  * recursive file listing.
@@ -74,7 +76,32 @@ public class FileTraverse {
 			}
 		}
 	}
+	
+	/* TODO
+	public static boolean isTextFile(Path path) {
+		String name = path.toString().toLowerCase();
+		return name.endsWith(".txt") || name.endsWith(".text");
+	}
 
+	public static void traverse(Path path, ArrayList<Path> paths) throws IOException {
+		if (Files.isDirectory(path)) {
+			try (DirectoryStream<Path> listing = Files.newDirectoryStream(path)) {
+				for (Path file : listing) {
+					traverse(file, paths);
+				}
+			}
+		} else if (isTextFile(path)) {
+			paths.add(path);
+		}
+	}
+	
+	public static ArrayList<Path> traverse(Path path) throws IOExection {
+		ArrayList<Path> paths = new ArrayList<Path>();
+		traverse(path, paths);
+		return paths;
+	}
+	*/
+	
 	/**
 	 * Safely starts the recursive traversal with the proper padding. Users of this
 	 * class can access this method, so some validation is required.
@@ -92,6 +119,7 @@ public class FileTraverse {
 		}
 	}
 
+	// TODO Breaks encapsulation
 	public ArrayList<Path> getPaths() {
 		return fileList;
 	}
