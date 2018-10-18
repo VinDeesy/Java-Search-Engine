@@ -4,6 +4,8 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
 
+// TODO ArgumentParser
+
 public class ArgParser {
 
 	private final Map<String, String> map;
@@ -56,6 +58,18 @@ public class ArgParser {
 				map.put(args[i], null);
 		}
 
+		/* TODO
+		for (int i = 0; i < args.length; i++) {
+			if (isFlag(args[i])) {
+				if (i + 1 < args.length && isValue(args[i + 1])) {
+					map.put(args[i], args[i + 1]);
+				}
+				else {
+					map.put(args[i], null);
+				}
+			}
+		}
+		*/
 	}
 
 	/**
