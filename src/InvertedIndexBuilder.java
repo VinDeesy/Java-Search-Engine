@@ -9,6 +9,16 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class InvertedIndexBuilder {
 
+	/**
+	 * Given a root path, traverses the directory for all text files and adds the
+	 * contents of the file to the index
+	 *
+	 * @param root  root directory to traverse
+	 * @param index data structure to store words and locations
+	 * @return null
+	 * 
+	 */
+
 	public static void addFiles(Path root, InvertedIndex index) throws IOException {
 
 		ArrayList<Path> pathList = FileTraverser.traverse(root);
@@ -19,10 +29,10 @@ public class InvertedIndexBuilder {
 	}
 
 	/**
-	 * Searches the file and adds the words based upon their position and file
-	 * location
+	 * Given a file, adds all words and locations to the index
 	 *
-	 * @param path location of file to search
+	 * @param path  location of file to search
+	 * @param index data structure to store words and locations
 	 * @return null
 	 * 
 	 */
@@ -48,7 +58,7 @@ public class InvertedIndexBuilder {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace(); // TODO No stack traces
+			System.out.println("There was an eoor adding the file: " + path.toString());
 
 		}
 

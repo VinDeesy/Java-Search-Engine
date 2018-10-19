@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 public class Driver {
 
@@ -31,11 +30,8 @@ public class Driver {
 		if (parser.hasValue("-path")) {
 			inputPath = Paths.get(parser.getString("-path"));
 
-			ArrayList<Path> pathList = FileTraverser.traverse(inputPath);
+			InvertedIndexBuilder.addFiles(inputPath, index);
 
-			for (Path path : pathList) {
-				index.search(path);
-			}
 		} else {
 			System.out.println("No path specified, exiting...");
 
@@ -55,7 +51,8 @@ public class Driver {
 			}
 
 			try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);) {
-				TreeJSONWriter.asNestedObject(index.index, writer, 1);
+
+				index.toJSON(outputPath);
 
 			} catch (Exception e) {
 				System.out.println("Error io open file: " + outputPath.toString());

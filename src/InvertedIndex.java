@@ -1,4 +1,3 @@
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -7,17 +6,15 @@ import java.nio.file.Path;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import opennlp.tools.stemmer.snowball.SnowballStemmer;
-
 /**
  * Data structure to store strings and their positions.
  */
 public class InvertedIndex {
-	// TODO private
+
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 
 	/**
 	 * Initializes the index.
@@ -75,10 +72,39 @@ public class InvertedIndex {
 		return index.containsKey(word);
 	}
 
-	/*
-	 * TODO public boolean contains(String word, String path) public boolean
-	 * contains(String word, String path, int position)
+	/**
+	 * Tests whether the index contains the specified word.
+	 *
+	 * @param word word to look for
+	 * @param path path word is mapped to
+	 * @return true if the word is stored in the index in the path
 	 */
+
+	public boolean contains(String word, String path) {
+
+		return index.get(word) == null ? false : index.get(word).containsKey(path.toString());
+	}
+
+	/**
+	 * Tests whether the index contains the specified word.
+	 *
+	 * @param word     word to look for
+	 * @param path     path word is mapped to
+	 * @param position position in the file to look for
+	 * @return true if the word is stored in the index
+	 */
+
+	public boolean contains(String word, String path, int position) {
+
+		boolean con = false;
+
+		try {
+			con = index.get(word).get(path.toString()).contains(position);
+		} catch (NullPointerException e) {
+		}
+		return con;
+
+	}
 
 	/**
 	 * Returns a string representation of this index.
@@ -88,58 +114,19 @@ public class InvertedIndex {
 		return this.index.toString();
 	}
 
-	public void toJSON(Path path) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8);) {
-			TreeJSONWriter.asNestedObject(index, writer, 1);
-		}
-	}
-
-	/*
-	 * TODO Move this to an InvertedIndexBuilder
-	 * 
-	 * Create a method that gets the list of text files, loops, and calls search on
-	 * all of them public static void addFiles(Path root, InvertedIndex index) {
-	 * ArrayList<Path> pathList = traverser.getPaths();
-	 * 
-	 * for (Path path : pathList) { addFile(path, index); } }
-	 * 
-	 * public static void addFile(Path path, InvertedIndex index)
-	 */
-
 	/**
 	 * Searches the file and adds the words based upon their position and file
 	 * location
 	 *
-	 * @param path location of file to search
+	 * @param path location to output JSON data
 	 * @return null
 	 * 
 	 */
 
-	public void search(Path path) {
-
-		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
-
-		{
-			Integer position = 0;
-			SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-			String fileName = path.toString();
-			String line = null;
-
-			while ((line = reader.readLine()) != null) {
-
-				String[] cleaned = TextParser.parse(line);
-
-				for (String string : cleaned) {
-					add(stemmer.stem(string).toString(), fileName, ++position);
-				}
-
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace(); // TODO No stack traces
-
+	public void toJSON(Path path) throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8);) {
+			TreeJSONWriter.asNestedObject(index, writer, 1);
 		}
-
 	}
 
 }

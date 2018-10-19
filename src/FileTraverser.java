@@ -16,10 +16,26 @@ import java.util.ArrayList;
  */
 public class FileTraverser {
 
+	/**
+	 * Determines whether a given file is a text file
+	 *
+	 * @param path file to check if is text
+	 * @return true if it is a text file
+	 * 
+	 */
+
 	public static boolean isTextFile(Path path) {
 		String name = path.toString().toLowerCase();
 		return name.endsWith(".txt") || name.endsWith(".text");
 	}
+
+	/**
+	 * Traverses a directory tree, adding all text files to a list
+	 *
+	 * @param path file/directory
+	 * @return null
+	 * 
+	 */
 
 	public static void traverse(Path path, ArrayList<Path> paths) throws IOException {
 		if (Files.isDirectory(path)) {
@@ -32,6 +48,15 @@ public class FileTraverser {
 			paths.add(path);
 		}
 	}
+
+	/**
+	 * Traverses a directory tree, starting at root, and adds all text files to a
+	 * list
+	 *
+	 * @param path root directory
+	 * @return list of text file paths
+	 * 
+	 */
 
 	public static ArrayList<Path> traverse(Path path) throws IOException {
 		ArrayList<Path> paths = new ArrayList<Path>();
