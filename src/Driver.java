@@ -20,21 +20,18 @@ public class Driver {
 		if (args.length == 0) {
 			return;
 		}
-		ArgParser parser = new ArgParser();
+		ArgumentParser parser = new ArgumentParser();
 
 		parser.parse(args);
 
 		Path inputPath;
 
-		wordIndex index = new wordIndex();
+		InvertedIndex index = new InvertedIndex();
 
 		if (parser.hasValue("-path")) {
 			inputPath = Paths.get(parser.getString("-path"));
 
-			FileTraverse traverser = new FileTraverse();
-			traverser.traverse(inputPath);
-
-			ArrayList<Path> pathList = traverser.getPaths();
+			ArrayList<Path> pathList = FileTraverser.traverse(inputPath);
 
 			for (Path path : pathList) {
 				index.search(path);

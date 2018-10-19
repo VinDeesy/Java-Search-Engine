@@ -4,16 +4,14 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
 
-// TODO ArgumentParser
-
-public class ArgParser {
+public class ArgumentParser {
 
 	private final Map<String, String> map;
 
 	/**
 	 * Initializes this argument map.
 	 */
-	public ArgParser() {
+	public ArgumentParser() {
 		this.map = new TreeMap<String, String>();
 
 	}
@@ -25,7 +23,7 @@ public class ArgParser {
 	 *
 	 * @param args
 	 */
-	public ArgParser(String[] args) {
+	public ArgumentParser(String[] args) {
 		this();
 		parse(args);
 	}
@@ -38,38 +36,16 @@ public class ArgParser {
 	 */
 	public void parse(String[] args) {
 
-		int length = args.length;
-		if (length == 0)
-			return;
-
-		int i = 0;
-		for (i = 0; i < length - 1; i++) {
-			if (args[i].startsWith("-") && !args[i + 1].startsWith("-")) {
-				if (!map.containsKey(args[i]))
-					map.put(args[i], args[i + 1]);
-			} else if (args[i].startsWith("-") && args[i].startsWith("-")) {
-				if (!map.containsKey(args[i]))
-					map.put(args[i], null);
-			}
-		}
-
-		if (args[i].startsWith("-")) {
-			if (!map.containsKey(args[i]))
-				map.put(args[i], null);
-		}
-
-		/* TODO
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
 				if (i + 1 < args.length && isValue(args[i + 1])) {
 					map.put(args[i], args[i + 1]);
-				}
-				else {
+				} else {
 					map.put(args[i], null);
 				}
 			}
 		}
-		*/
+
 	}
 
 	/**
