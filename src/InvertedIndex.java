@@ -96,13 +96,14 @@ public class InvertedIndex {
 
 	public boolean contains(String word, String path, int position) {
 
-		boolean con = false;
+		boolean contains = false;
 
 		try {
-			con = index.get(word).get(path.toString()).contains(position);
+			contains = index.get(word).get(path.toString()).contains(position);
 		} catch (NullPointerException e) {
+			return false;
 		}
-		return con;
+		return contains;
 
 	}
 

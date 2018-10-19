@@ -58,7 +58,7 @@ public class InvertedIndexBuilder {
 			}
 
 		} catch (IOException e) {
-			System.out.println("There was an eoor adding the file: " + path.toString());
+			System.out.println("There was an error adding the file: " + path.toString());
 
 		}
 
