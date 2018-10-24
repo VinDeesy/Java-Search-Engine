@@ -6,6 +6,11 @@ import java.nio.file.Path;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/*
+TODO No blank line between Javadoc comment and method it comments on!
+No need to keep calling path.toString() now that path is a String object!
+*/
+
 /**
  * Data structure to store strings and their positions.
  */
