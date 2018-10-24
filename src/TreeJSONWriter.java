@@ -258,7 +258,7 @@ public class TreeJSONWriter {
 		writer.write("}" + System.lineSeparator());
 
 		writer.write('}');
-		writer.close();
+		writer.close(); // TODO Don't close the writer in code that doesn't create the writer! You can call flush() if you want.
 	}
 
 }
