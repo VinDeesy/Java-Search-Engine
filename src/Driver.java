@@ -14,7 +14,7 @@ public class Driver {
 	 * @param args the command-line arguments to parse
 	 * @throws IOException
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException { // TODO Remove the "throws" here!
 
 		if (args.length == 0) {
 			return;
@@ -40,6 +40,10 @@ public class Driver {
 		Path outputPath;
 
 		if (parser.hasFlag("-index")) {
+
+			// TODO More complicated than you need...
+			// TODO No need to delete or create... just need:
+			// TODO outputPath = parser.getPath("-index", Paths.get("index.json"));
 
 			if (!parser.hasValue("-index")) {
 				Files.deleteIfExists(Paths.get("index.json"));

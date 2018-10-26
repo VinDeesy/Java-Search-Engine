@@ -58,6 +58,8 @@ public class InvertedIndexBuilder {
 			}
 
 		} catch (IOException e) {
+			// TODO Remove the catch block and throw exception to Driver
+			// TODO You can have try-with-resources block without catch blocks!
 			System.out.println("There was an error adding the file: " + path.toString());
 
 		}
