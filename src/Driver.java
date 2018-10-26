@@ -46,7 +46,6 @@ public class Driver {
 		if (parser.hasFlag("-index")) {
 
 			outputPath = parser.getPath("-index", Paths.get("index.json"));
-			System.out.println("output path is: " + outputPath);
 			try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);) {
 
 				index.toJSON(outputPath);

@@ -206,9 +206,9 @@ public class ArgumentParser {
 
 		try {
 
-			return Paths.get(map.get(flag)) == null ? defaultValue : Paths.get(map.get(flag));
+			return Paths.get(map.get(flag));
 
-		} catch (InvalidPathException e) {
+		} catch (NullPointerException e) {
 			return defaultValue;
 		}
 	}
