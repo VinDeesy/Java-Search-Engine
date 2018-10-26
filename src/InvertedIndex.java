@@ -6,11 +6,6 @@ import java.nio.file.Path;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-/*
-TODO No blank line between Javadoc comment and method it comments on!
-No need to keep calling path.toString() now that path is a String object!
-*/
-
 /**
  * Data structure to store strings and their positions.
  */
@@ -84,10 +79,9 @@ public class InvertedIndex {
 	 * @param path path word is mapped to
 	 * @return true if the word is stored in the index in the path
 	 */
-
 	public boolean contains(String word, String path) {
 
-		return index.get(word) == null ? false : index.get(word).containsKey(path.toString());
+		return index.get(word) == null ? false : index.get(word).containsKey(path);
 	}
 
 	/**
@@ -98,13 +92,12 @@ public class InvertedIndex {
 	 * @param position position in the file to look for
 	 * @return true if the word is stored in the index
 	 */
-
 	public boolean contains(String word, String path, int position) {
 
 		boolean contains = false;
 
 		try {
-			contains = index.get(word).get(path.toString()).contains(position);
+			contains = index.get(word).get(path).contains(position);
 		} catch (NullPointerException e) {
 			return false;
 		}
@@ -128,7 +121,6 @@ public class InvertedIndex {
 	 * @return null
 	 * 
 	 */
-
 	public void toJSON(Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8);) {
 			TreeJSONWriter.asNestedObject(index, writer, 1);

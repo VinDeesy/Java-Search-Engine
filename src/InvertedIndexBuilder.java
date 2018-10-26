@@ -34,10 +34,11 @@ public class InvertedIndexBuilder {
 	 * @param path  location of file to search
 	 * @param index data structure to store words and locations
 	 * @return null
+	 * @throws IOException
 	 * 
 	 */
 
-	public static void addFile(Path path, InvertedIndex index) {
+	public static void addFile(Path path, InvertedIndex index) throws IOException {
 
 		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
 
@@ -56,11 +57,6 @@ public class InvertedIndexBuilder {
 				}
 
 			}
-
-		} catch (IOException e) {
-			// TODO Remove the catch block and throw exception to Driver
-			// TODO You can have try-with-resources block without catch blocks!
-			System.out.println("There was an error adding the file: " + path.toString());
 
 		}
 
