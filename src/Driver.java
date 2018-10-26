@@ -14,7 +14,7 @@ public class Driver {
 	 * @param args the command-line arguments to parse
 	 * @throws IOException
 	 */
-	public static void main(String[] args) throws IOException { // TODO Remove the "throws" here!
+	public static void main(String[] args) {
 //
 		if (args.length == 0) {
 			return;
@@ -30,29 +30,22 @@ public class Driver {
 		if (parser.hasValue("-path")) {
 			inputPath = Paths.get(parser.getString("-path"));
 
-			InvertedIndexBuilder.addFiles(inputPath, index);
+			try {
+				InvertedIndexBuilder.addFiles(inputPath, index);
+			} catch (IOException e) {
+				System.out.println("There was an error building the index");
+			}
 
 		} else {
 			System.out.println("No path specified, exiting...");
 
 		}
 
-		Path outputPath;
+		Path outputPath = null;
 
 		if (parser.hasFlag("-index")) {
 
-			// TODO More complicated than you need...
-			// TODO No need to delete or create... just need:
-			// TODO outputPath = parser.getPath("-index", Paths.get("index.json"));
-
-			if (!parser.hasValue("-index")) {
-				Files.deleteIfExists(Paths.get("index.json"));
-				outputPath = Paths.get("index.json");
-				Files.createFile(outputPath);
-
-			} else {
-				outputPath = Paths.get(parser.getString("-index"));
-			}
+			outputPath = parser.getPath("-index", Paths.get("index.json"));
 
 			try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);) {
 
