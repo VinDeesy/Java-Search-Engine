@@ -123,6 +123,13 @@ public class InvertedIndex {
 		return this.index.toString();
 	}
 
+	/**
+	 * Searches the index for exact matches from a list of queries
+	 *
+	 * @param queries query words to search our index
+	 * @return ArrayList of results
+	 */
+
 	public ArrayList<ArrayList<Result>> searchExact(ArrayList<TreeSet<String>> queries) {
 
 		try {
@@ -180,8 +187,6 @@ public class InvertedIndex {
 
 			for (Entry<String, TreeMap<String, Integer>> q : resultMap.entrySet()) {
 
-				;
-
 				resultList.add(new ArrayList<>());
 
 				if (q.getValue() != null) {
@@ -212,6 +217,12 @@ public class InvertedIndex {
 		}
 	}
 
+	/**
+	 * Searches the index for partial matches from a list of queries
+	 *
+	 * @param queries query words to search our index
+	 * @return ArrayList of results
+	 */
 	public ArrayList<ArrayList<Result>> searchPartial(ArrayList<TreeSet<String>> queries) {
 
 		try {
@@ -318,12 +329,19 @@ public class InvertedIndex {
 		}
 	}
 
+	/**
+	 * Prints the locations and word counts for each file in the index
+	 * 
+	 * @param path location to output JSON data
+	 * @return null
+	 * 
+	 */
 	public void locationJSON(Path location) {
 		try (BufferedWriter writer = Files.newBufferedWriter(location, StandardCharsets.UTF_8);) {
 			TreeJSONWriter.printLocations(locations, writer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			System.out.println("Error!");
 		}
 
 	}

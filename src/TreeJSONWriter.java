@@ -264,14 +264,16 @@ public class TreeJSONWriter {
 
 	}
 
+	/**
+	 * Prints location data to text file in JSON format
+	 *
+	 * @param locations Map storing location data
+	 * @param writer    bufferedwriter
+	 * 
+	 */
 	public static void printLocations(TreeMap<String, Integer> locations, BufferedWriter writer) throws IOException {
 		writer.write("{" + System.lineSeparator());
 
-//		for (Map.Entry<String, Integer> file : locations.headMap()) {
-//			quote(file.getKey(), writer);
-//			writer.write(": " + file.getValue().toString());
-//
-//		}
 		Iterator<Entry<String, Integer>> entries = locations.entrySet().iterator();
 		Map.Entry<String, Integer> entry = entries.next();
 		while (entries.hasNext()) {
@@ -293,6 +295,13 @@ public class TreeJSONWriter {
 
 	}
 
+	/**
+	 * Prints result data to file in JSON format
+	 * 
+	 * @param results list of search results
+	 * @param writer  bufferedwriter
+	 * 
+	 */
 	public static void printSearch(ArrayList<ArrayList<Result>> results, BufferedWriter writer) throws IOException {
 
 		System.out.println("AWDILAWDAWJD");
