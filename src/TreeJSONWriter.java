@@ -5,6 +5,8 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -259,6 +261,142 @@ public class TreeJSONWriter {
 
 		writer.write('}');
 		writer.flush();
+
+	}
+
+	/**
+	 * Prints location data to text file in JSON format
+	 *
+	 * @param locations Map storing location data
+	 * @param writer    bufferedwriter
+	 * 
+	 */
+	public static void printLocations(TreeMap<String, Integer> locations, BufferedWriter writer) throws IOException {
+		writer.write("{" + System.lineSeparator());
+
+		Iterator<Entry<String, Integer>> entries = locations.entrySet().iterator();
+		Map.Entry<String, Integer> entry = entries.next();
+		while (entries.hasNext()) {
+
+			indent(1, writer);
+
+			String file = entry.getKey();
+			Integer wordsNum = (Integer) entry.getValue();
+
+			quote(file, writer);
+			writer.write(": " + wordsNum.toString() + ",");
+			writer.write(System.lineSeparator());
+			entry = entries.next();
+		}
+		indent(1, writer);
+		quote(entry.getKey(), writer);
+		writer.write(": " + entry.getValue().toString() + System.lineSeparator());
+		writer.write("}");
+
+	}
+
+	/**
+	 * Prints result data to file in JSON format
+	 * 
+	 * @param results list of search results
+	 * @param writer  bufferedwriter
+	 * 
+	 */
+	public static void printSearch(ArrayList<ArrayList<Result>> results, BufferedWriter writer) throws IOException {
+
+		System.out.println("AWDILAWDAWJD");
+
+		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
+
+		writer.write("[");
+
+		if (results == null || results.isEmpty()) {
+			writer.write(System.lineSeparator() + "]");
+		}
+
+		else {
+			writer.write(System.lineSeparator());
+			indent(1, writer);
+			writer.write("{");
+			writer.write(System.lineSeparator());
+
+			int i = 0;
+
+			for (ArrayList<Result> result : results) {
+
+				indent(2, writer);
+
+				quote("queries", writer);
+				writer.write(": ");
+
+				quote(result.get(i).query, writer);
+				writer.write("," + System.lineSeparator());
+				indent(2, writer);
+				quote("results", writer);
+				writer.write(":");
+				writer.write(" [" + System.lineSeparator());
+
+				if (result.get(0).count == 0) {
+					indent(2, writer);
+					writer.write("]" + System.lineSeparator());
+				} else {
+
+					indent(3, writer);
+
+					writer.write("{" + System.lineSeparator());
+
+					for (Result fileResult : result) {
+						indent(4, writer);
+						quote("where", writer);
+						writer.write(": ");
+						quote(fileResult.file, writer);
+						writer.write(",");
+						writer.write(System.lineSeparator());
+
+						indent(4, writer);
+						quote("count", writer);
+						writer.write(": ");
+
+						writer.write(fileResult.count + "," + System.lineSeparator());
+						indent(4, writer);
+
+						quote("score", writer);
+						writer.write(": ");
+						writer.write(FORMATTER.format(fileResult.score) + System.lineSeparator());
+
+						indent(3, writer);
+
+						if (result.indexOf(fileResult) == result.size() - 1) {
+							writer.write("}");
+							writer.write(System.lineSeparator());
+
+							indent(2, writer);
+							writer.write("]" + System.lineSeparator());
+						} else {
+							writer.write("}," + System.lineSeparator());
+							indent(2, writer);
+							writer.write("{" + System.lineSeparator());
+						}
+
+					}
+				}
+
+				if (results.indexOf(result) == results.size() - 1) {
+					indent(1, writer);
+					writer.write("}" + System.lineSeparator());
+				} else {
+					indent(1, writer);
+					writer.write("}," + System.lineSeparator());
+					indent(1, writer);
+					writer.write("{" + System.lineSeparator());
+				}
+
+			}
+			writer.write("]");
+
+			i++;
+
+		}
 
 	}
 
