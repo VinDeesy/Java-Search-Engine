@@ -67,6 +67,18 @@ public class InvertedIndexBuilder {
 
 	}
 
+	public static void addFileThreaded(Path root, InvertedIndex index, int threads) throws IOException {
+
+		WorkQueue queue = new WorkQueue(threads);
+
+		ArrayList<Path> pathList = FileTraverser.traverse(root);
+
+		for (Path path : pathList) {
+			addFile(path, index);
+		}
+
+	}
+
 	private class FileTask {
 
 	}
