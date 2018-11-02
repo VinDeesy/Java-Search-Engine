@@ -304,8 +304,6 @@ public class TreeJSONWriter {
 	 */
 	public static void printSearch(ArrayList<ArrayList<Result>> results, BufferedWriter writer) throws IOException {
 
-		System.out.println("AWDILAWDAWJD");
-
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 
 		writer.write("[");
