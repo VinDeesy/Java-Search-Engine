@@ -40,31 +40,33 @@ public class InvertedIndexBuilder {
 
 	public static void addFile(Path path, InvertedIndex index) throws IOException {
 
-		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
+		synchronized (index) {
 
-		{
-			Integer numWords = 0;
-			Integer position = 0;
-			SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-			String fileName = path.toString();
-			String line = null;
+			try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
 
-			while ((line = reader.readLine()) != null) {
+			{
+				Integer numWords = 0;
+				Integer position = 0;
+				SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+				String fileName = path.toString();
+				String line = null;
 
-				String[] cleaned = TextParser.parse(line);
+				while ((line = reader.readLine()) != null) {
 
-				for (String string : cleaned) {
-					index.add(stemmer.stem(string).toString(), fileName, ++position);
-				}
-				numWords += cleaned.length;
-				if (numWords > 0) {
-					index.addLocation(path.toString(), numWords);
+					String[] cleaned = TextParser.parse(line);
+
+					for (String string : cleaned) {
+						index.add(stemmer.stem(string).toString(), fileName, ++position);
+					}
+					numWords += cleaned.length;
+					if (numWords > 0) {
+						index.addLocation(path.toString(), numWords);
+					}
+
 				}
 
 			}
-
 		}
-
 	}
 
 	public static void addFileThreaded(Path root, InvertedIndex index, int threads) throws IOException {
