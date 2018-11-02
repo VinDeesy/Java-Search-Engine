@@ -74,12 +74,28 @@ public class InvertedIndexBuilder {
 		ArrayList<Path> pathList = FileTraverser.traverse(root);
 
 		for (Path path : pathList) {
-			addFile(path, index);
+			FileTask task = new FileTask(path, index);
+			queue.execute(task);
+
 		}
 
+		queue.finish();
+		queue.shutdown();
 	}
 
-	private class FileTask {
+	private static class FileTask implements Runnable {
+
+		Path path;
+		InvertedIndex index;
+
+		public FileTask(Path path, InvertedIndex index) {
+			this.index = index;
+			this.path = path;
+		}
+
+		public void run() {
+
+		}
 
 	}
 }
