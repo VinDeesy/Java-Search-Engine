@@ -19,6 +19,8 @@ public class InvertedIndex {
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	private final TreeMap<String, Integer> locations;
+	
+	// TODO Remove.... when we get to the search engine, would be bad if our index had to remember every search made
 	private final TreeMap<String, TreeMap<String, Integer>> resultMap;
 
 	/**
@@ -138,7 +140,30 @@ public class InvertedIndex {
 
 				String queryName = String.join(" ", query);
 
+				// TODO Start here instead
 				for (String word : query) {
+					
+					/*
+					TODO
+					List<Result> results = ....
+					Map<String (location), Result> lookup = ...
+					
+					if index.containsKey(word) {
+						for every location for this word
+							do we already have a result for this location?
+							(if lookup contains this location as a key)
+							if yes, need to update the count for that result
+							
+							if no, need to add a new result
+								Result result = new Result(...)
+								results.add(result);
+								lookup.put(location, result);
+					
+					Collections.sort(results);
+					return results;
+					}
+					 */
+					
 
 					Integer count = 0;
 					String fileName = "";
