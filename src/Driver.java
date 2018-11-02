@@ -25,6 +25,16 @@ public class Driver {
 
 		parser.parse(args);
 
+		if (parser.hasFlag("threads")) {
+
+			int threads = Integer.parseInt(parser.getString("threads"));
+
+			if (threads < 0) {
+				threads = 5;
+			}
+
+		}
+
 		Path inputPath;
 
 		InvertedIndex index = new InvertedIndex();

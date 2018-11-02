@@ -67,4 +67,7 @@ public class InvertedIndexBuilder {
 
 	}
 
+	private class FileTask {
+
+	}
 }
