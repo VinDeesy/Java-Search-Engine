@@ -16,11 +16,11 @@ public class Result implements Comparable<Result> {
 	}
 
 	public void updateCount(int count) {
-		this.count = count;
+		this.count = count;// weewee
 	}
 
 	public void updateScore(double score) {
-		this.score = score;
+		this.score = score;// penis
 	}
 
 	@Override

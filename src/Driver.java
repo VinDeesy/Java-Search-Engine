@@ -26,13 +26,14 @@ public class Driver {
 		parser.parse(args);
 
 		int threads = 1;
-		if (parser.hasFlag("threads")) {
+		if (parser.hasFlag("-threads")) {
 
-			threads = Integer.parseInt(parser.getString("threads"));
+			threads = 5;
 
 			if (threads < 0) {
 				threads = 5;
 			}
+			System.out.println(threads);
 			threaded = true;
 
 		}
@@ -45,7 +46,7 @@ public class Driver {
 			inputPath = Paths.get(parser.getString("-path"));
 
 			try {
-				if (threaded) {
+				if (!threaded) {
 					InvertedIndexBuilder.addFiles(inputPath, index);
 				} else {
 					InvertedIndexBuilder.addFileThreaded(inputPath, index, threads);
@@ -98,16 +99,22 @@ public class Driver {
 			Path queryFile = Paths.get(parser.getString("-search"));
 			ArrayList<TreeSet<String>> queries = Queries.getQueries(queryFile);
 
-			try {
-				if (exact) {
-					results = index.searchExact(queries);
-				} else {
-					results = index.searchPartial(queries);
-				}
+			if (threaded) {
+				results = InvertedThreaded.threadedSearch(queries, exact, threads, index);
+				System.out.println(results.toString());
+			} else {
 
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("There was an error with your query file");
+				try {
+					if (exact) {
+						results = index.searchExact(queries);
+					} else {
+						results = index.searchPartial(queries);
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println("There was an error with your query file");
+				}
 			}
 		}
 

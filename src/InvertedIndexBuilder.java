@@ -38,7 +38,7 @@ public class InvertedIndexBuilder {
 	 * 
 	 */
 
-	public static void addFile(Path path, InvertedIndex index) throws IOException {
+	public synchronized static void addFile(Path path, InvertedIndex index) throws IOException {
 
 		synchronized (index) {
 
@@ -79,6 +79,8 @@ public class InvertedIndexBuilder {
 			FileTask task = new FileTask(path, index);
 			queue.execute(task);
 
+			System.out.println("THREADED!!!!");
+
 		}
 
 		queue.finish();
@@ -96,7 +98,12 @@ public class InvertedIndexBuilder {
 		}
 
 		public void run() {
-
+			try {
+				addFile(path, index);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

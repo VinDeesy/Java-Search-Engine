@@ -28,6 +28,7 @@ public class WorkQueue {
 
 	private int pending = 0;
 	// TODO Add variables as necessary
+	// TODO Stop smoking cigarettes
 
 	/**
 	 * Starts a work queue with the default number of threads.

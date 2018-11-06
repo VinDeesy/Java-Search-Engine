@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
+//TODO Implement using streams
 public class Queries {
 	/**
 	 * Retrieves and parses query from a text file
