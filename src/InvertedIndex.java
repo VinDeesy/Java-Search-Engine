@@ -137,13 +137,13 @@ public class InvertedIndex {
 
 		try {
 
-			ArrayList<Result> results = new ArrayList<>();
-
+			TreeMap<String, ArrayList<Result>> resultMap = new TreeMap<>();
 			for (TreeSet<String> query : queries) {
 
+				ArrayList<Result> results = new ArrayList<>();
 				String queryName = String.join(" ", query);
 				TreeMap<String, Result> lookup = new TreeMap<>();
-				// TODO Start here instead
+
 				for (String word : query) {
 
 					/*
@@ -247,9 +247,22 @@ public class InvertedIndex {
 //			}
 
 				}
+				Collections.sort(results);
+				resultMap.put(queryName, results);
 			}
 
-			Collections.sort(results);
+			for (Entry<String, ArrayList<Result>> query : resultMap.entrySet()) {
+
+				System.out.println(query.getKey());
+
+				for (Result result : query.getValue()) {
+
+					System.out.println(result.file + " " + result.count + " " + result.query);
+
+				}
+
+			}
+
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
