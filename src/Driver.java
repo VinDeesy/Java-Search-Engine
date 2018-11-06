@@ -75,7 +75,7 @@ public class Driver {
 		}
 
 		Boolean exact = parser.hasFlag("-exact");
-		ArrayList<ArrayList<Result>> results = null;
+		ArrayList<Result> results = null;
 
 		if (parser.hasValue("-search")) {
 

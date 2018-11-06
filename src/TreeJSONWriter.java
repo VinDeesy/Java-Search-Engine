@@ -302,7 +302,7 @@ public class TreeJSONWriter {
 	 * @param writer  bufferedwriter
 	 * 
 	 */
-	public static void printSearch(ArrayList<ArrayList<Result>> results, BufferedWriter writer) throws IOException {
+	public static void printSearch(ArrayList<Result> results, BufferedWriter writer) throws IOException {
 
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 
@@ -320,7 +320,7 @@ public class TreeJSONWriter {
 
 			int i = 0;
 
-			for (ArrayList<Result> result : results) {
+			for (Result result : results) {
 
 				indent(2, writer);
 

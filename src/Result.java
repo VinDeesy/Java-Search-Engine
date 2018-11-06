@@ -3,27 +3,30 @@
 public class Result implements Comparable<Result> {
 
 	// TODO private, final where appropriate
-	
+
 	public int count;
 
 	public String file;
 	public String query; // TODO Maybe remove?
 	String qString; // TODO Maybe remove?
 	double score;
+	int total;
 
 	// TODO public Result(int count, String file, int total) {
 	// TODO every time count changes, recalculate score automatically
-	
-	public Result(int count, String q, String file, double score) {
+
+	public Result(int count, String q, String file, int total) {
 
 		this.count = count;
 		this.file = file;
-		this.score = score;
 		this.query = q;
+		this.total = total;
+		this.score = (double) this.count / this.total;
 	}
-	
+
 	public void updateCount(int count) {
-		this.count = count; // TODO this.count += count, update the score
+		this.count += count; // TODO this.count += count, update the score
+		this.score = (double) this.count / this.total;
 	}
 
 	public void updateScore(double score) { // TODO Remove
@@ -37,11 +40,11 @@ public class Result implements Comparable<Result> {
 		if (c == 0) {
 			c = Integer.compare(other.count, this.count);
 		}
-		
+
 		if (c == 0) {
 			c = this.file.compareTo(other.file);
 		}
-		
+
 		return c;
 	}
 
