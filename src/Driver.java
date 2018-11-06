@@ -22,16 +22,18 @@ public class Driver {
 			return;
 		}
 		ArgumentParser parser = new ArgumentParser();
-
+		Boolean threaded = false;
 		parser.parse(args);
 
+		int threads = 1;
 		if (parser.hasFlag("threads")) {
 
-			int threads = Integer.parseInt(parser.getString("threads"));
+			threads = Integer.parseInt(parser.getString("threads"));
 
 			if (threads < 0) {
 				threads = 5;
 			}
+			threaded = true;
 
 		}
 
@@ -43,7 +45,11 @@ public class Driver {
 			inputPath = Paths.get(parser.getString("-path"));
 
 			try {
-				InvertedIndexBuilder.addFiles(inputPath, index);
+				if (threaded) {
+					InvertedIndexBuilder.addFiles(inputPath, index);
+				} else {
+					InvertedIndexBuilder.addFileThreaded(inputPath, index, threads);
+				}
 			} catch (IOException e) {
 				System.out.println("There was an error building the index");
 			}

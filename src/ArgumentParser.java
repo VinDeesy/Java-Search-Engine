@@ -114,7 +114,7 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag exists
 	 */
 	public boolean hasFlag(String flag) {
-
+		// TODO Should return unmodifiable set rather than boolean value
 		return map.containsKey(flag);
 
 	}
@@ -126,7 +126,7 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag is mapped to a non-null value
 	 */
 	public boolean hasValue(String flag) {
-
+		// TODO Breaks encapsulation :(
 		return map.get(flag) != null;
 
 	}

@@ -20,6 +20,7 @@ public class InvertedIndex {
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	private final TreeMap<String, Integer> locations;
 	private final TreeMap<String, TreeMap<String, Integer>> resultMap;
+	private Lock lock;
 
 	/**
 	 * Initializes the index.
@@ -28,6 +29,7 @@ public class InvertedIndex {
 		this.index = new TreeMap<>();
 		this.locations = new TreeMap<>();
 		this.resultMap = new TreeMap<>();
+		this.lock = new Lock();
 	}
 
 	/**
@@ -39,10 +41,16 @@ public class InvertedIndex {
 	 */
 	public boolean add(String word, String fileName, Integer position) {
 
-		index.putIfAbsent(word, new TreeMap<>());
-		index.get(word).putIfAbsent(fileName, new TreeSet<Integer>());
-		return index.get(word).get(fileName).add(position);
+		lock.lockReadWrite(); // Hey david i just wanted to say that you're not commenting your code correctly
 
+		try {
+
+			index.putIfAbsent(word, new TreeMap<>());
+			index.get(word).putIfAbsent(fileName, new TreeSet<Integer>());
+			return index.get(word).get(fileName).add(position);
+		} finally {
+			lock.unlockReadWrite();
+		}
 	}
 
 	/**
@@ -53,12 +61,21 @@ public class InvertedIndex {
 	 * @return number of times the word was found
 	 */
 	public int count(String word) {
-
-		return index.get(word) == null ? 0 : index.get(word).size();
+		lock.lockReadOnly();
+		try {
+			return index.get(word) == null ? 0 : index.get(word).size();
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	public void addLocation(String location, Integer count) {
-		locations.put(location, count);
+		lock.lockReadWrite();
+		try {
+			locations.put(location, count);
+		} finally {
+			lock.unlockReadWrite();
+		}
 	}
 
 	/**
@@ -68,7 +85,12 @@ public class InvertedIndex {
 	 */
 	public int words() {
 
-		return index.size();
+		lock.lockReadOnly();
+		try {
+			return index.size();
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -79,7 +101,12 @@ public class InvertedIndex {
 	 */
 	public boolean contains(String word) {
 
-		return index.containsKey(word);
+		lock.lockReadOnly();
+		try {
+			return index.containsKey(word);
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -91,7 +118,12 @@ public class InvertedIndex {
 	 */
 	public boolean contains(String word, String path) {
 
-		return index.get(word) == null ? false : index.get(word).containsKey(path);
+		lock.lockReadOnly();
+		try {
+			return index.get(word) == null ? false : index.get(word).containsKey(path);
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -104,15 +136,20 @@ public class InvertedIndex {
 	 */
 	public boolean contains(String word, String path, int position) {
 
-		boolean contains = false;
-
+		lock.lockReadOnly();
 		try {
-			contains = index.get(word).get(path).contains(position);
-		} catch (NullPointerException e) {
-			return false;
-		}
-		return contains;
 
+			boolean contains = false;
+
+			try {
+				contains = index.get(word).get(path).contains(position);
+			} catch (NullPointerException e) {
+				return false;
+			}
+			return contains;
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -120,7 +157,12 @@ public class InvertedIndex {
 	 */
 	@Override
 	public String toString() {
-		return this.index.toString();
+		lock.lockReadOnly();
+		try {
+			return this.index.toString();
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -131,6 +173,8 @@ public class InvertedIndex {
 	 */
 
 	public ArrayList<ArrayList<Result>> searchExact(ArrayList<TreeSet<String>> queries) {
+
+		lock.unlockReadWrite();
 
 		try {
 
@@ -214,6 +258,8 @@ public class InvertedIndex {
 		} catch (Exception e) {
 			System.out.println("The path was probably null");
 			return null;
+		} finally {
+			lock.unlockReadOnly();
 		}
 	}
 
@@ -225,6 +271,7 @@ public class InvertedIndex {
 	 */
 	public ArrayList<ArrayList<Result>> searchPartial(ArrayList<TreeSet<String>> queries) {
 
+		lock.lockReadWrite();
 		try {
 
 			for (Entry<String, TreeMap<String, TreeSet<Integer>>> indexWord : index.entrySet()) {
@@ -312,7 +359,25 @@ public class InvertedIndex {
 		} catch (Exception e) {
 			System.out.println("There was probably an error with the path");
 			return null;
+		} finally {
+			lock.unlockReadWrite();
 		}
+	}
+
+	private static class FileTask implements Runnable {
+
+		Path path;
+		InvertedIndex index;
+
+		public FileTask(Path path, InvertedIndex index) {
+			this.index = index;
+			this.path = path;
+		}
+
+		public void run() {
+
+		}
+		// TODO be better at coding
 	}
 
 	/**

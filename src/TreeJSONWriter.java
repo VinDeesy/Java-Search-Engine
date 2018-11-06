@@ -152,7 +152,7 @@ public class TreeJSONWriter {
 			indent(2, writer);
 			quote(file.getKey(), writer);
 			writer.write(": ");
-
+			// TODO do better, scrub
 			asArray(file.getValue(), writer, 1);
 			writer.write("," + System.lineSeparator());
 			file = it.next();
