@@ -8,6 +8,39 @@ import java.util.TreeSet;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class Queries {
+	
+	/*
+	 * TODO
+	private final TreeMap<String, List<Result>> results;
+	private final InvertedIndex index;
+	
+	public Queries(InvertedIndex index) {
+	
+	}
+	
+	public void getQueries(Path path, boolean exact) {
+		loop through each line
+			Stemmer ...
+			
+			TreeSet<String> queryWords = ...
+			String queryLine = String.join(" ", query);
+			
+			if (exact) {
+				List<Result> resultList = index.searchExact(queryWords);
+				results.put(queryLine, resultList);
+			
+			}
+			else {
+			
+			}
+	}
+	
+	public void toJSON(...) {
+	
+	}
+	
+	*/
+	
 	/**
 	 * Retrieves and parses query from a text file
 	 * 
