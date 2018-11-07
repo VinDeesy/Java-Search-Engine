@@ -200,12 +200,15 @@ public class InvertedIndex {
 
 			ArrayList<Result> results = new ArrayList<>();
 			TreeMap<String, ArrayList<Result>> resultMap = new TreeMap<>();
+
 			for (Entry<String, TreeMap<String, TreeSet<Integer>>> indexWord : index.entrySet()) {
 
 				for (TreeSet<String> query : queries) {
+
 					boolean found = false;
 					String queryName = String.join(" ", query);
 					TreeMap<String, Result> lookup = new TreeMap<>();
+
 					for (String queryWord : query) {
 
 						if (indexWord.getKey().startsWith(queryWord)) {

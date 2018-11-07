@@ -310,7 +310,7 @@ public class TreeJSONWriter {
 		writer.write("[");
 
 		if (results == null || results.isEmpty()) {
-			System.out.println("NULLL");
+
 			writer.write(System.lineSeparator() + "]");
 		}
 
@@ -341,8 +341,7 @@ public class TreeJSONWriter {
 				for (Result result : query.getValue()) {
 
 					if (result == null || result.file == "" || result.count == 0) {
-						indent(2, writer);
-						writer.write("]" + System.lineSeparator());
+						continue;
 					} else {
 						indent(3, writer);
 
