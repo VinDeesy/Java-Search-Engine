@@ -152,7 +152,7 @@ public class TreeJSONWriter {
 			indent(2, writer);
 			quote(file.getKey(), writer);
 			writer.write(": ");
-			// TODO do better, scrub
+
 			asArray(file.getValue(), writer, 1);
 			writer.write("," + System.lineSeparator());
 			file = it.next();
@@ -302,52 +302,57 @@ public class TreeJSONWriter {
 	 * @param writer  bufferedwriter
 	 * 
 	 */
-	public static void printSearch(ArrayList<ArrayList<Result>> results, BufferedWriter writer) throws IOException {
+	public static void printSearch(TreeMap<String, ArrayList<Result>> results, BufferedWriter writer)
+			throws IOException {
 
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 
+		System.out.println("Hello from JSON?");
+
 		writer.write("[");
 
-		if (results == null || results.isEmpty()) {
-			writer.write(System.lineSeparator() + "]");
-		}
+		writer.write(System.lineSeparator());
+		indent(1, writer);
+		writer.write("{");
+		writer.write(System.lineSeparator());
 
-		else {
-			writer.write(System.lineSeparator());
-			indent(1, writer);
-			writer.write("{");
-			writer.write(System.lineSeparator());
+		int i = 0;
 
-			int i = 0;
+		for (Entry<String, ArrayList<Result>> query : results.entrySet()) {
 
-			for (ArrayList<Result> result : results) {
+			String lastQuery = results.lastKey();
 
+			indent(2, writer);
+
+			quote("queries", writer);
+			writer.write(": ");
+
+			quote(query.getKey(), writer);
+			writer.write("," + System.lineSeparator());
+			indent(2, writer);
+			quote("results", writer);
+			writer.write(":");
+			writer.write(" [" + System.lineSeparator());
+
+			if (query.getValue().size() == 0) {
 				indent(2, writer);
+				writer.write("]" + System.lineSeparator());
+			} else {
 
-				quote("queries", writer);
-				writer.write(": ");
+				for (Result result : query.getValue()) {
 
-				quote(result.get(i).query, writer);
-				writer.write("," + System.lineSeparator());
-				indent(2, writer);
-				quote("results", writer);
-				writer.write(":");
-				writer.write(" [" + System.lineSeparator());
+					if (query.getValue() == null) {
+						indent(2, writer);
+						writer.write("]" + System.lineSeparator());
+					} else {
+						indent(3, writer);
 
-				if (result.get(0).count == 0) {
-					indent(2, writer);
-					writer.write("]" + System.lineSeparator());
-				} else {
+						writer.write("{" + System.lineSeparator());
 
-					indent(3, writer);
-
-					writer.write("{" + System.lineSeparator());
-
-					for (Result fileResult : result) {
 						indent(4, writer);
 						quote("where", writer);
 						writer.write(": ");
-						quote(fileResult.file, writer);
+						quote(result.file, writer);
 						writer.write(",");
 						writer.write(System.lineSeparator());
 
@@ -355,16 +360,16 @@ public class TreeJSONWriter {
 						quote("count", writer);
 						writer.write(": ");
 
-						writer.write(fileResult.count + "," + System.lineSeparator());
+						writer.write(result.count + "," + System.lineSeparator());
 						indent(4, writer);
 
 						quote("score", writer);
 						writer.write(": ");
-						writer.write(FORMATTER.format(fileResult.score) + System.lineSeparator());
+						writer.write(FORMATTER.format(result.score) + System.lineSeparator());
 
 						indent(3, writer);
 
-						if (result.indexOf(fileResult) == result.size() - 1) {
+						if (query.getValue().indexOf(result) == query.getValue().size() - 1) {
 							writer.write("}");
 							writer.write(System.lineSeparator());
 
@@ -372,29 +377,28 @@ public class TreeJSONWriter {
 							writer.write("]" + System.lineSeparator());
 						} else {
 							writer.write("}," + System.lineSeparator());
-							indent(2, writer);
-							writer.write("{" + System.lineSeparator());
 						}
 
 					}
-				}
 
-				if (results.indexOf(result) == results.size() - 1) {
-					indent(1, writer);
-					writer.write("}" + System.lineSeparator());
-				} else {
-					indent(1, writer);
-					writer.write("}," + System.lineSeparator());
-					indent(1, writer);
-					writer.write("{" + System.lineSeparator());
 				}
+			}
+
+			if (query.getKey() == lastQuery) {
+				indent(1, writer);
+				writer.write("}" + System.lineSeparator());
+			} else {
+				indent(1, writer);
+				writer.write("}," + System.lineSeparator());
+				indent(1, writer);
+				writer.write("{" + System.lineSeparator());
 
 			}
-			writer.write("]");
-
-			i++;
 
 		}
+		writer.write("]");
+
+		i++;
 
 	}
 

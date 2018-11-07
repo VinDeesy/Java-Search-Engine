@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 public class Driver {
 
@@ -22,20 +22,14 @@ public class Driver {
 			return;
 		}
 		ArgumentParser parser = new ArgumentParser();
-		Boolean threaded = false;
+
 		parser.parse(args);
 
-		int threads = 1;
+		boolean threaded = false;
+		int threads = 5;
 		if (parser.hasFlag("-threads")) {
-
-			threads = 5;
-
-			if (threads < 0) {
-				threads = 5;
-			}
-			System.out.println(threads);
 			threaded = true;
-
+			threads = 5;
 		}
 
 		Path inputPath;
@@ -46,11 +40,7 @@ public class Driver {
 			inputPath = Paths.get(parser.getString("-path"));
 
 			try {
-				if (!threaded) {
-					InvertedIndexBuilder.addFiles(inputPath, index);
-				} else {
-					InvertedIndexBuilder.addFileThreaded(inputPath, index, threads);
-				}
+				InvertedIndexBuilder.addFiles(inputPath, index);
 			} catch (IOException e) {
 				System.out.println("There was an error building the index");
 			}
@@ -92,29 +82,24 @@ public class Driver {
 		}
 
 		Boolean exact = parser.hasFlag("-exact");
-		ArrayList<ArrayList<Result>> results = new ArrayList<>();
-
+		TreeMap<String, ArrayList<Result>> results = null;
+		Queries query = new Queries(index);
 		if (parser.hasValue("-search")) {
 
 			Path queryFile = Paths.get(parser.getString("-search"));
-			ArrayList<TreeSet<String>> queries = Queries.getQueries(queryFile);
 
 			if (threaded) {
-				results = index.threadedSearch(queries, exact, threads, index, results);
-				System.out.println(results.toString());
+				query.ThreadedSearch(queryFile, exact, threads);
 			} else {
 
-				try {
-					if (exact) {
-						results = index.searchExact(queries, results);
-					} else {
-						results = index.searchPartial(queries, results);
-					}
+				query.getQueries(queryFile, exact);
+			}
 
-				} catch (Exception e) {
-					e.printStackTrace();
-					System.out.println("There was an error with your query file");
-				}
+			try {
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("There was an error with your query file");
 			}
 		}
 
@@ -130,7 +115,7 @@ public class Driver {
 			}
 			try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8);) {
 
-				TreeJSONWriter.printSearch(results, writer);
+				query.printSearch(writer);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("Something got fuckedup with printing the results");

@@ -7,12 +7,12 @@ public class Result implements Comparable<Result> {
 	String qString;
 	double score;
 
-	public Result(int count, String q, String file, double score) {
+	public Result(int count, String file, double score) {
 
 		this.count = count;
 		this.file = file;
 		this.score = score;
-		this.query = q;
+
 	}
 
 	public void updateCount(int count) {
