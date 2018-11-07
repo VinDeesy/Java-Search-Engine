@@ -1,46 +1,51 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class Queries {
-	
-	/*
-	 * TODO
-	private final TreeMap<String, List<Result>> results;
-	private final InvertedIndex index;
-	
+
+	public TreeMap<String, ArrayList<Result>> results;
+	InvertedIndex index;
+
 	public Queries(InvertedIndex index) {
-	
+		this.results = new TreeMap<>();
+		this.index = index;
 	}
-	
-	public void getQueries(Path path, boolean exact) {
-		loop through each line
-			Stemmer ...
-			
-			TreeSet<String> queryWords = ...
-			String queryLine = String.join(" ", query);
-			
-			if (exact) {
-				List<Result> resultList = index.searchExact(queryWords);
-				results.put(queryLine, resultList);
-			
-			}
-			else {
-			
-			}
-	}
-	
-	public void toJSON(...) {
-	
-	}
-	
-	*/
-	
+
+	/*
+	 * TODO private final TreeMap<String, List<Result>> results; private final
+	 * InvertedIndex index;
+	 * 
+	 * public Queries(InvertedIndex index) {
+	 * 
+	 * }
+	 * 
+	 * public void getQueries(Path path, boolean exact) { loop through each line
+	 * Stemmer ...
+	 * 
+	 * TreeSet<String> queryWords = ... String queryLine = String.join(" ", query);
+	 * 
+	 * if (exact) { List<Result> resultList = index.searchExact(queryWords);
+	 * results.put(queryLine, resultList);
+	 * 
+	 * } else {
+	 * 
+	 * } }
+	 * 
+	 * public void toJSON(...) {
+	 * 
+	 * }
+	 * 
+	 */
+
 	/**
 	 * Retrieves and parses query from a text file
 	 * 
@@ -48,7 +53,7 @@ public class Queries {
 	 * @return list of queries
 	 * 
 	 */
-	public static ArrayList<TreeSet<String>> getQueries(Path path) {
+	public void getQueries(Path path, boolean exact) {
 
 		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);) {
 
@@ -56,30 +61,42 @@ public class Queries {
 
 			String line = null;
 
-			ArrayList<TreeSet<String>> queries = new ArrayList<>();
-
 			while ((line = reader.readLine()) != null) {
 
 				String[] cleaned = TextParser.parse(line);
 
-				TreeSet<String> x = new TreeSet<>();
+				TreeSet<String> query = new TreeSet<>();
 
 				for (String string : cleaned) {
-					x.add(stemmer.stem(string).toString());
-				}
+					query.add(stemmer.stem(string).toString());
 
-				if (!queries.contains(x)) {
-					queries.add(x);
 				}
+				String queryLine = String.join(" ", query);
+				if (queryLine == "") {
+					continue;
+				}
+				ArrayList<Result> resultList;
+				if (exact) {
+
+					resultList = index.searchExact(query);
+
+				} else {
+					resultList = index.searchPartial(query);
+				}
+				results.put(queryLine, resultList);
 
 			}
-			return queries;
 
 		} catch (Exception e) {
 			System.out.println("There was an error processing the query file");
-			return null;
+
 		}
 
+	}
+
+	public void printSearch(BufferedWriter writer) throws IOException {
+
+		TreeJSONWriter.printSearch(results, writer);
 	}
 
 }

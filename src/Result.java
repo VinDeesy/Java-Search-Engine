@@ -18,11 +18,11 @@ public class Result implements Comparable<Result> {
 	 * @param total total amount of words in the file
 	 * @return number of times the word was found
 	 */
-	public Result(int count, String q, String file, int total) {
+	public Result(int count, String file, int total) {
 
 		this.count = count;
 		this.file = file;
-		this.query = q;
+
 		this.total = total;
 		this.score = (double) this.count / this.total;
 	}

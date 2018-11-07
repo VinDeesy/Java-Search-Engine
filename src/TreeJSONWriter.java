@@ -307,40 +307,41 @@ public class TreeJSONWriter {
 
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 
+		System.out.println("Hello from JSON?");
+
 		writer.write("[");
 
-		if (results == null || results.isEmpty()) {
-			System.out.println("NULLL");
-			writer.write(System.lineSeparator() + "]");
-		}
+		writer.write(System.lineSeparator());
+		indent(1, writer);
+		writer.write("{");
+		writer.write(System.lineSeparator());
 
-		else {
-			writer.write(System.lineSeparator());
-			indent(1, writer);
-			writer.write("{");
-			writer.write(System.lineSeparator());
+		int i = 0;
 
-			int i = 0;
+		for (Entry<String, ArrayList<Result>> query : results.entrySet()) {
 
-			for (Entry<String, ArrayList<Result>> query : results.entrySet()) {
+			String lastQuery = results.lastKey();
 
-				String lastQuery = results.lastKey();
+			indent(2, writer);
 
+			quote("queries", writer);
+			writer.write(": ");
+
+			quote(query.getKey(), writer);
+			writer.write("," + System.lineSeparator());
+			indent(2, writer);
+			quote("results", writer);
+			writer.write(":");
+			writer.write(" [" + System.lineSeparator());
+
+			if (query.getValue().size() == 0) {
 				indent(2, writer);
-
-				quote("queries", writer);
-				writer.write(": ");
-
-				quote(query.getKey(), writer);
-				writer.write("," + System.lineSeparator());
-				indent(2, writer);
-				quote("results", writer);
-				writer.write(":");
-				writer.write(" [" + System.lineSeparator());
+				writer.write("]" + System.lineSeparator());
+			} else {
 
 				for (Result result : query.getValue()) {
 
-					if (result == null || result.file == "" || result.count == 0) {
+					if (query.getValue() == null) {
 						indent(2, writer);
 						writer.write("]" + System.lineSeparator());
 					} else {
@@ -376,104 +377,28 @@ public class TreeJSONWriter {
 							writer.write("]" + System.lineSeparator());
 						} else {
 							writer.write("}," + System.lineSeparator());
-							indent(2, writer);
-							writer.write("{" + System.lineSeparator());
 						}
 
 					}
 
 				}
+			}
 
-				if (query.getKey() == lastQuery) {
-					indent(1, writer);
-					writer.write("}" + System.lineSeparator());
-				} else {
-					indent(1, writer);
-					writer.write("}," + System.lineSeparator());
-					indent(1, writer);
-					writer.write("{" + System.lineSeparator());
-
-				}
+			if (query.getKey() == lastQuery) {
+				indent(1, writer);
+				writer.write("}" + System.lineSeparator());
+			} else {
+				indent(1, writer);
+				writer.write("}," + System.lineSeparator());
+				indent(1, writer);
+				writer.write("{" + System.lineSeparator());
 
 			}
-			writer.write("]");
-
-			i++;
 
 		}
-//			for (Result result : results) {
-//
-//				indent(2, writer);
-//
-//				quote("queries", writer);
-//				writer.write(": ");
-//
-//				quote(result.get(i).query, writer);
-//				writer.write("," + System.lineSeparator());
-//				indent(2, writer);
-//				quote("results", writer);
-//				writer.write(":");
-//				writer.write(" [" + System.lineSeparator());
-//
-//				if (result.get(0).count == 0) {
-//					indent(2, writer);
-//					writer.write("]" + System.lineSeparator());
-//				} else {
-//
-//					indent(3, writer);
-//
-//					writer.write("{" + System.lineSeparator());
-//
-//					for (Result fileResult : result) {
-//						indent(4, writer);
-//						quote("where", writer);
-//						writer.write(": ");
-//						quote(fileResult.file, writer);
-//						writer.write(",");
-//						writer.write(System.lineSeparator());
-//
-//						indent(4, writer);
-//						quote("count", writer);
-//						writer.write(": ");
-//
-//						writer.write(fileResult.count + "," + System.lineSeparator());
-//						indent(4, writer);
-//
-//						quote("score", writer);
-//						writer.write(": ");
-//						writer.write(FORMATTER.format(fileResult.score) + System.lineSeparator());
-//
-//						indent(3, writer);
-//
-//						if (result.indexOf(fileResult) == result.size() - 1) {
-//							writer.write("}");
-//							writer.write(System.lineSeparator());
-//
-//							indent(2, writer);
-//							writer.write("]" + System.lineSeparator());
-//						} else {
-//							writer.write("}," + System.lineSeparator());
-//							indent(2, writer);
-//							writer.write("{" + System.lineSeparator());
-//						}
-//
-//					}
-//				}
-//
-//				if (results.indexOf(result) == results.size() - 1) {
-//					indent(1, writer);
-//					writer.write("}" + System.lineSeparator());
-//				} else {
-//					indent(1, writer);
-//					writer.write("}," + System.lineSeparator());
-//					indent(1, writer);
-//					writer.write("{" + System.lineSeparator());
-//				}
-//
-//			}
-//			writer.write("]");
-//
-//			i++;
+		writer.write("]");
+
+		i++;
 
 	}
 

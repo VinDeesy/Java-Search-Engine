@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class Driver {
 
@@ -77,18 +76,14 @@ public class Driver {
 
 		Boolean exact = parser.hasFlag("-exact");
 		TreeMap<String, ArrayList<Result>> results = null;
-
+		Queries query = new Queries(index);
 		if (parser.hasValue("-search")) {
 
 			Path queryFile = Paths.get(parser.getString("-search"));
-			ArrayList<TreeSet<String>> queries = Queries.getQueries(queryFile);
+
+			query.getQueries(queryFile, exact);
 
 			try {
-				if (exact) {
-					results = index.searchExact(queries);
-				} else {
-					results = index.searchPartial(queries);
-				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -108,9 +103,9 @@ public class Driver {
 			}
 			try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8);) {
 
-				TreeJSONWriter.printSearch(results, writer);
+				query.printSearch(writer);
 			} catch (Exception e) {
-
+				e.printStackTrace();
 				System.out.println("Something got fuckedup with printing the results");
 			}
 		}
