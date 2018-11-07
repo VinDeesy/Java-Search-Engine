@@ -4,8 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.TreeMap;
 
 public class Driver {
 
@@ -75,7 +73,7 @@ public class Driver {
 		}
 
 		Boolean exact = parser.hasFlag("-exact");
-		TreeMap<String, ArrayList<Result>> results = null;
+
 		Queries query = new Queries(index);
 		if (parser.hasValue("-search")) {
 
@@ -106,7 +104,7 @@ public class Driver {
 				query.printSearch(writer);
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("Something got fuckedup with printing the results");
+				System.out.println("There was an error with printing the results");
 			}
 		}
 

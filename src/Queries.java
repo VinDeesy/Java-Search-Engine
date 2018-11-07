@@ -12,45 +12,23 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class Queries {
 
-	public TreeMap<String, ArrayList<Result>> results;
+	public TreeMap<String, ArrayList<Result>> results; // Data structure storing search results
 	InvertedIndex index;
 
+	/*
+	 * Initializes the Queries
+	 */
 	public Queries(InvertedIndex index) {
 		this.results = new TreeMap<>();
 		this.index = index;
 	}
 
-	/*
-	 * TODO private final TreeMap<String, List<Result>> results; private final
-	 * InvertedIndex index;
-	 * 
-	 * public Queries(InvertedIndex index) {
-	 * 
-	 * }
-	 * 
-	 * public void getQueries(Path path, boolean exact) { loop through each line
-	 * Stemmer ...
-	 * 
-	 * TreeSet<String> queryWords = ... String queryLine = String.join(" ", query);
-	 * 
-	 * if (exact) { List<Result> resultList = index.searchExact(queryWords);
-	 * results.put(queryLine, resultList);
-	 * 
-	 * } else {
-	 * 
-	 * } }
-	 * 
-	 * public void toJSON(...) {
-	 * 
-	 * }
-	 * 
-	 */
-
 	/**
 	 * Retrieves and parses query from a text file
 	 * 
-	 * @param path location to text file
-	 * @return list of queries
+	 * @param path  location to text file
+	 * @param exact partial or exact search
+	 * @return none
 	 * 
 	 */
 	public void getQueries(Path path, boolean exact) {
@@ -94,6 +72,13 @@ public class Queries {
 
 	}
 
+	/**
+	 * Retrieves and parses query from a text file
+	 * 
+	 * @param writer writer to write JSON
+	 * @return none
+	 * 
+	 */
 	public void printSearch(BufferedWriter writer) throws IOException {
 
 		TreeJSONWriter.printSearch(results, writer);

@@ -1,11 +1,8 @@
-// TODO Javadoc
 
 public class Result implements Comparable<Result> {
 
 	public int count;
-
 	public String file;
-	public String query;
 	public double score;
 	private int total;
 
@@ -22,21 +19,8 @@ public class Result implements Comparable<Result> {
 
 		this.count = count;
 		this.file = file;
-
 		this.total = total;
 		this.score = (double) this.count / this.total;
-	}
-
-	/*
-	 * Creates a blank (null) Result
-	 * 
-	 */
-	public Result() {
-		this.count = 0;
-		this.file = "";
-		this.query = null;
-		this.total = 0;
-		this.score = 0;
 	}
 
 	/**
@@ -55,6 +39,7 @@ public class Result implements Comparable<Result> {
 	 * Comparator for sorting results
 	 * 
 	 * @param other result to compare to
+	 * @return integer c of comparison
 	 * 
 	 */
 

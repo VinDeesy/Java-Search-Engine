@@ -316,8 +316,6 @@ public class TreeJSONWriter {
 		writer.write("{");
 		writer.write(System.lineSeparator());
 
-		int i = 0;
-
 		for (Entry<String, ArrayList<Result>> query : results.entrySet()) {
 
 			String lastQuery = results.lastKey();
@@ -397,8 +395,6 @@ public class TreeJSONWriter {
 
 		}
 		writer.write("]");
-
-		i++;
 
 	}
 
