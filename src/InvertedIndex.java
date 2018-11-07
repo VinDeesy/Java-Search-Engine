@@ -158,7 +158,7 @@ public class InvertedIndex {
 
 					}
 					if (!found) {
-						Result result = null;
+						Result result = new Result();
 						results.add(result);
 					}
 
@@ -182,6 +182,7 @@ public class InvertedIndex {
 			return resultMap;
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("There was an error with searching the index");
 		}
 		return null;
@@ -225,7 +226,7 @@ public class InvertedIndex {
 						}
 
 						if (!found) {
-							Result result = null;
+							Result result = new Result();
 							results.add(result);
 						}
 

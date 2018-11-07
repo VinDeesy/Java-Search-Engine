@@ -32,7 +32,11 @@ public class Result implements Comparable<Result> {
 	 * 
 	 */
 	public Result() {
-
+		this.count = 0;
+		this.file = "";
+		this.query = null;
+		this.total = 0;
+		this.score = 0;
 	}
 
 	/**
