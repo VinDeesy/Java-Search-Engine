@@ -107,6 +107,11 @@ public class ArgumentParser {
 
 	}
 
+	public int parseInt() {
+
+		return 0;
+	}
+
 	/**
 	 * Determines whether the specified flag exists.
 	 *

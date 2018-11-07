@@ -92,7 +92,7 @@ public class Driver {
 		}
 
 		Boolean exact = parser.hasFlag("-exact");
-		ArrayList<ArrayList<Result>> results = null;
+		ArrayList<ArrayList<Result>> results = new ArrayList<>();
 
 		if (parser.hasValue("-search")) {
 
@@ -100,15 +100,15 @@ public class Driver {
 			ArrayList<TreeSet<String>> queries = Queries.getQueries(queryFile);
 
 			if (threaded) {
-				results = InvertedThreaded.threadedSearch(queries, exact, threads, index);
+				results = index.threadedSearch(queries, exact, threads, index, results);
 				System.out.println(results.toString());
 			} else {
 
 				try {
 					if (exact) {
-						results = index.searchExact(queries);
+						results = index.searchExact(queries, results);
 					} else {
-						results = index.searchPartial(queries);
+						results = index.searchPartial(queries, results);
 					}
 
 				} catch (Exception e) {
@@ -132,7 +132,7 @@ public class Driver {
 
 				TreeJSONWriter.printSearch(results, writer);
 			} catch (Exception e) {
-
+				e.printStackTrace();
 				System.out.println("Something got fuckedup with printing the results");
 			}
 		}

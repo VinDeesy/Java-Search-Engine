@@ -79,8 +79,6 @@ public class InvertedIndexBuilder {
 			FileTask task = new FileTask(path, index);
 			queue.execute(task);
 
-			System.out.println("THREADED!!!!");
-
 		}
 
 		queue.finish();

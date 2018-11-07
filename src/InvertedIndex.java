@@ -20,6 +20,7 @@ public class InvertedIndex {
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	private final TreeMap<String, Integer> locations;
 	private final TreeMap<String, TreeMap<String, Integer>> resultMap;
+	private Lock lock;
 
 	/**
 	 * Initializes the index.
@@ -28,7 +29,7 @@ public class InvertedIndex {
 		this.index = new TreeMap<>();
 		this.locations = new TreeMap<>();
 		this.resultMap = new TreeMap<>();
-
+		this.lock = new Lock();
 	}
 
 	/**
@@ -40,9 +41,16 @@ public class InvertedIndex {
 	 */
 	public boolean add(String word, String fileName, Integer position) {
 
-		index.putIfAbsent(word, new TreeMap<>());
-		index.get(word).putIfAbsent(fileName, new TreeSet<Integer>());
-		return index.get(word).get(fileName).add(position);
+		lock.lockReadWrite(); // Hey david i just wanted to say that you're not commenting your code correctly
+
+		try {
+
+			index.putIfAbsent(word, new TreeMap<>());
+			index.get(word).putIfAbsent(fileName, new TreeSet<Integer>());
+			return index.get(word).get(fileName).add(position);
+		} finally {
+			lock.unlockReadWrite();
+		}
 	}
 
 	/**
@@ -53,11 +61,21 @@ public class InvertedIndex {
 	 * @return number of times the word was found
 	 */
 	public int count(String word) {
-		return index.get(word) == null ? 0 : index.get(word).size();
+		lock.lockReadOnly();
+		try {
+			return index.get(word) == null ? 0 : index.get(word).size();
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	public void addLocation(String location, Integer count) {
-		locations.put(location, count);
+		lock.lockReadWrite();
+		try {
+			locations.put(location, count);
+		} finally {
+			lock.unlockReadWrite();
+		}
 	}
 
 	/**
@@ -67,7 +85,12 @@ public class InvertedIndex {
 	 */
 	public int words() {
 
-		return index.size();
+		lock.lockReadOnly();
+		try {
+			return index.size();
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -78,8 +101,12 @@ public class InvertedIndex {
 	 */
 	public boolean contains(String word) {
 
-		return index.containsKey(word);
-
+		lock.lockReadOnly();
+		try {
+			return index.containsKey(word);
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -91,8 +118,12 @@ public class InvertedIndex {
 	 */
 	public boolean contains(String word, String path) {
 
-		return index.get(word) == null ? false : index.get(word).containsKey(path);
-
+		lock.lockReadOnly();
+		try {
+			return index.get(word) == null ? false : index.get(word).containsKey(path);
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -105,15 +136,20 @@ public class InvertedIndex {
 	 */
 	public boolean contains(String word, String path, int position) {
 
-		boolean contains = false;
-
+		lock.lockReadOnly();
 		try {
-			contains = index.get(word).get(path).contains(position);
-		} catch (NullPointerException e) {
-			return false;
-		}
-		return contains;
 
+			boolean contains = false;
+
+			try {
+				contains = index.get(word).get(path).contains(position);
+			} catch (NullPointerException e) {
+				return false;
+			}
+			return contains;
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -121,7 +157,12 @@ public class InvertedIndex {
 	 */
 	@Override
 	public String toString() {
-		return this.index.toString();
+		lock.lockReadOnly();
+		try {
+			return this.index.toString();
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -131,7 +172,10 @@ public class InvertedIndex {
 	 * @return ArrayList of results
 	 */
 
-	public ArrayList<ArrayList<Result>> searchExact(ArrayList<TreeSet<String>> queries) {
+	public ArrayList<ArrayList<Result>> searchExact(ArrayList<TreeSet<String>> queries,
+			ArrayList<ArrayList<Result>> resultList) {
+
+		lock.lockReadWrite();
 
 		try {
 
@@ -140,8 +184,6 @@ public class InvertedIndex {
 				String queryName = String.join(" ", query);
 
 				for (String word : query) {
-
-					System.out.println(word);
 
 					Integer count = 0;
 					String fileName = "";
@@ -186,8 +228,6 @@ public class InvertedIndex {
 
 			int i = 0;
 
-			ArrayList<ArrayList<Result>> resultList = new ArrayList<>();
-
 			for (Entry<String, TreeMap<String, Integer>> q : resultMap.entrySet()) {
 
 				resultList.add(new ArrayList<>());
@@ -217,6 +257,8 @@ public class InvertedIndex {
 		} catch (Exception e) {
 			System.out.println("The path was probably null");
 			return null;
+		} finally {
+			lock.unlockReadOnly();
 		}
 	}
 
@@ -226,8 +268,10 @@ public class InvertedIndex {
 	 * @param queries query words to search our index
 	 * @return ArrayList of results
 	 */
-	public ArrayList<ArrayList<Result>> searchPartial(ArrayList<TreeSet<String>> queries) {
+	public ArrayList<ArrayList<Result>> searchPartial(ArrayList<TreeSet<String>> queries,
+			ArrayList<ArrayList<Result>> resultList) {
 
+		lock.lockReadWrite();
 		try {
 
 			for (Entry<String, TreeMap<String, TreeSet<Integer>>> indexWord : index.entrySet()) {
@@ -284,8 +328,6 @@ public class InvertedIndex {
 
 			int i = 0;
 
-			ArrayList<ArrayList<Result>> resultList = new ArrayList<>();
-
 			for (Entry<String, TreeMap<String, Integer>> q : resultMap.entrySet()) {
 
 				resultList.add(new ArrayList<>());
@@ -298,7 +340,15 @@ public class InvertedIndex {
 
 						Result result = new Result(file.getValue(), q.getKey(), file.getKey(), score);
 
-						resultList.get(i).add(result);
+						boolean copy = false;
+						for (Result res : resultList.get(i)) {
+							if (res.file == result.file && res.count == result.count && res.qString == result.qString) {
+								copy = true;
+							}
+						}
+						if (!copy) {
+							resultList.get(i).add(result);
+						}
 
 					}
 
@@ -313,10 +363,66 @@ public class InvertedIndex {
 
 			return resultList;
 		} catch (Exception e) {
-			e.printStackTrace();
 			System.out.println("There was probably an error with the path");
 			return null;
+		} finally {
+			lock.unlockReadWrite();
 		}
+	}
+
+	public ArrayList<ArrayList<Result>> threadedSearch(ArrayList<TreeSet<String>> queries, boolean exact, int threads,
+			InvertedIndex index, ArrayList<ArrayList<Result>> resultList) {
+
+		WorkQueue queue = new WorkQueue(threads);
+
+		for (TreeSet query : queries) {
+			QueryTask task = new QueryTask(resultList, index, query, exact);
+			queue.execute(task);
+
+		}
+
+		queue.finish();
+		queue.shutdown();
+
+		return resultList;
+	}
+
+	private static class QueryTask implements Runnable {
+
+		ArrayList<ArrayList<Result>> results;
+		InvertedIndex index;
+		TreeSet<String> query;
+		boolean exact;
+
+		public QueryTask(ArrayList<ArrayList<Result>> results, InvertedIndex index, TreeSet<String> query,
+				boolean exact) {
+			this.index = index;
+			this.results = results;
+			this.query = query;
+			this.exact = exact;
+		}
+
+		public void run() {
+
+			System.out.println("Hello my query is: " + query.toString());
+
+			ArrayList<TreeSet<String>> x = new ArrayList<>();
+			x.add(query);
+
+			if (exact) {
+				synchronized (this) {
+
+					index.searchExact(x, results);
+				}
+
+			} else {
+				synchronized (this) {
+
+					index.searchPartial(x, results);
+				}
+			}
+		}
+
 	}
 
 	/**
