@@ -2,19 +2,22 @@
 
 public class Result implements Comparable<Result> {
 
-	// TODO private, final where appropriate
-
 	public int count;
 
 	public String file;
-	public String query; // TODO Maybe remove?
-	String qString; // TODO Maybe remove?
-	double score;
-	int total;
+	public String query;
+	public double score;
+	private int total;
 
-	// TODO public Result(int count, String file, int total) {
-	// TODO every time count changes, recalculate score automatically
-
+	/**
+	 * Creates a new Result object and calculates the score
+	 *
+	 * @param count amount of occurences in the file
+	 * @param q     the query
+	 * @param file  file that the word is found in
+	 * @param total total amount of words in the file
+	 * @return number of times the word was found
+	 */
 	public Result(int count, String q, String file, int total) {
 
 		this.count = count;
@@ -24,14 +27,32 @@ public class Result implements Comparable<Result> {
 		this.score = (double) this.count / this.total;
 	}
 
+	/*
+	 * Creates a blank (null) Result
+	 * 
+	 */
+	public Result() {
+
+	}
+
+	/**
+	 * Updates the count and recalculates the score when the query is found multiple
+	 * times
+	 * 
+	 * @param count new count amount to update
+	 * 
+	 */
 	public void updateCount(int count) {
-		this.count += count; // TODO this.count += count, update the score
+		this.count += count;
 		this.score = (double) this.count / this.total;
 	}
 
-	public void updateScore(double score) { // TODO Remove
-		this.score = score;
-	}
+	/**
+	 * Comparator for sorting results
+	 * 
+	 * @param other result to compare to
+	 * 
+	 */
 
 	@Override
 	public int compareTo(Result other) {
@@ -46,10 +67,6 @@ public class Result implements Comparable<Result> {
 		}
 
 		return c;
-	}
-
-	public String getqString() {
-		return this.qString;
 	}
 
 }

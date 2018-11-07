@@ -20,17 +20,12 @@ public class InvertedIndex {
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	private final TreeMap<String, Integer> locations;
 
-	// TODO Remove.... when we get to the search engine, would be bad if our index
-	// had to remember every search made
-	private final TreeMap<String, TreeMap<String, Integer>> resultMap;
-
 	/**
 	 * Initializes the index.
 	 */
 	public InvertedIndex() {
 		this.index = new TreeMap<>();
 		this.locations = new TreeMap<>();
-		this.resultMap = new TreeMap<>();
 	}
 
 	/**
@@ -130,37 +125,24 @@ public class InvertedIndex {
 	 * Searches the index for exact matches from a list of queries
 	 *
 	 * @param queries query words to search our index
-	 * @return ArrayList of results
+	 * @return TreeMap of results
 	 */
 
-	public ArrayList<Result> searchExact(ArrayList<TreeSet<String>> queries) {
+	public TreeMap<String, ArrayList<Result>> searchExact(ArrayList<TreeSet<String>> queries) {
 
 		try {
 
 			TreeMap<String, ArrayList<Result>> resultMap = new TreeMap<>();
 			for (TreeSet<String> query : queries) {
-
+				boolean found = false;
 				ArrayList<Result> results = new ArrayList<>();
 				String queryName = String.join(" ", query);
 				TreeMap<String, Result> lookup = new TreeMap<>();
 
 				for (String word : query) {
 
-					/*
-					 * TODO List<Result> results = .... Map<String (location), Result> lookup = ...
-					 * 
-					 * if index.containsKey(word) { for every location for this word do we already
-					 * have a result for this location? (if lookup contains this location as a key)
-					 * if yes, need to update the count for that result
-					 * 
-					 * if no, need to add a new result Result result = new Result(...)
-					 * results.add(result); lookup.put(location, result);
-					 * 
-					 * Collections.sort(results); return results; }
-					 */
-
 					if (index.containsKey(word)) {
-
+						found = true;
 						for (Entry<String, TreeSet<Integer>> fileEntry : index.get(word).entrySet()) {
 
 							if (!lookup.containsKey(fileEntry.getKey())) {
@@ -175,76 +157,10 @@ public class InvertedIndex {
 						}
 
 					}
-
-//					Integer count = 0;
-//					String fileName = "";
-//
-//					TreeMap<String, TreeSet<Integer>> fileList = index.get(word);
-//
-//					if (fileList != null) {
-//
-//						for (Entry<String, TreeSet<Integer>> fileEntry : fileList.entrySet()) {
-//
-//							count = fileEntry.getValue().size();
-//							fileName = fileEntry.getKey();
-//
-//							if (resultMap.get(queryName) == null) {
-//
-//								resultMap.put(queryName, new TreeMap<>());
-//								resultMap.get(queryName).put(fileName, count);
-//
-//							} else if (resultMap.get(queryName).get(fileName) == null) {
-//
-//								resultMap.get(queryName).put(fileName, count);
-//
-//							} else {
-//
-//								count = count + resultMap.get(queryName).get(fileName);
-//
-//								resultMap.get(queryName).put(fileName, count);
-//
-//							}
-//
-//						}
-//
-//						count = 0;
-//
-//					} else {
-//						resultMap.putIfAbsent(queryName, null);
-//					}
-//
-//				}
-//
-//			}
-//
-//			int i = 0;
-//
-//			ArrayList<ArrayList<Result>> resultList = new ArrayList<>();
-//
-//			for (Entry<String, TreeMap<String, Integer>> q : resultMap.entrySet()) {
-//
-//				resultList.add(new ArrayList<>());
-//
-//				if (q.getValue() != null) {
-//
-//					for (Entry<String, Integer> file : q.getValue().entrySet()) {
-//
-//						double score = (double) file.getValue() / locations.get(file.getKey());
-//
-//						Result result = new Result(file.getValue(), q.getKey(), file.getKey(), score);
-//
-//						resultList.get(i).add(result);
-//
-//					}
-//
-//					Collections.sort(resultList.get(i));
-//
-//					i++;
-//				} else {
-//					resultList.get(i).add(new Result(0, q.getKey(), null, 0));
-//					i++;
-//				}
-//			}
+					if (!found) {
+						Result result = null;
+						results.add(result);
+					}
 
 				}
 				Collections.sort(results);
@@ -263,8 +179,10 @@ public class InvertedIndex {
 
 			}
 
+			return resultMap;
+
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println("There was an error with searching the index");
 		}
 		return null;
 	}
@@ -275,22 +193,22 @@ public class InvertedIndex {
 	 * @param queries query words to search our index
 	 * @return ArrayList of results
 	 */
-	public ArrayList<Result> searchPartial(ArrayList<TreeSet<String>> queries) {
+	public TreeMap<String, ArrayList<Result>> searchPartial(ArrayList<TreeSet<String>> queries) {
 
 		try {
 
 			ArrayList<Result> results = new ArrayList<>();
-
+			TreeMap<String, ArrayList<Result>> resultMap = new TreeMap<>();
 			for (Entry<String, TreeMap<String, TreeSet<Integer>>> indexWord : index.entrySet()) {
 
 				for (TreeSet<String> query : queries) {
-
+					boolean found = false;
 					String queryName = String.join(" ", query);
 					TreeMap<String, Result> lookup = new TreeMap<>();
 					for (String queryWord : query) {
 
 						if (indexWord.getKey().startsWith(queryWord)) {
-
+							found = true;
 							for (Entry<String, TreeSet<Integer>> fileEntry : index.get(queryWord).entrySet()) {
 
 								if (!lookup.containsKey(fileEntry.getKey())) {
@@ -306,90 +224,23 @@ public class InvertedIndex {
 
 						}
 
-//						Integer count = 0;
-//						String fileName = "";
-//
-//						if (indexWord.getKey().startsWith(queryWord)) {
-//
-//							String word = indexWord.getKey();
-//
-//							TreeMap<String, TreeSet<Integer>> fileList = index.get(word);
-//
-//							for (Entry<String, TreeSet<Integer>> fileEntry : fileList.entrySet()) {
-//
-//								count = fileEntry.getValue().size();
-//								fileName = fileEntry.getKey();
-//
-//								if (resultMap.get(queryName) == null) {
-//
-//									resultMap.put(queryName, new TreeMap<>());
-//									resultMap.get(queryName).put(fileName, count);
-//
-//								} else if (resultMap.get(queryName).get(fileName) == null) {
-//
-//									resultMap.get(queryName).put(fileName, count);
-//
-//								} else {
-//
-//									count = count + resultMap.get(queryName).get(fileName);
-//
-//									resultMap.get(queryName).put(fileName, count);
-//
-//								}
-//
-//							}
-//
-//							count = 0;
-//
-//						} else {
-//							resultMap.putIfAbsent(queryName, null);
-//						}
-//					}
-//
-//				}
-//
-//			}
-//
-//			int i = 0;
-//
-//			ArrayList<ArrayList<Result>> resultList = new ArrayList<>();
-//
-//			for (Entry<String, TreeMap<String, Integer>> q : resultMap.entrySet()) {
-//
-//				resultList.add(new ArrayList<>());
-//
-//				if (q.getValue() != null) {
-//
-//					for (Entry<String, Integer> file : q.getValue().entrySet()) {
-//
-//						double score = (double) file.getValue() / locations.get(file.getKey());
-//
-//						// Result result = new Result(file.getValue(), q.getKey(), file.getKey(),
-//						// score);
-//
-//						// resultList.get(i).add(result);
-//
-//					}
-//
-//					Collections.sort(resultList.get(i));
-//
-//					i++;
-//				} else {
-//					resultList.get(i).add(new Result(0, q.getKey(), null, 0));
-//					i++;
-//				}
-//			}
-//
-//			return resultList;
+						if (!found) {
+							Result result = null;
+							results.add(result);
+						}
+
 					}
+					Collections.sort(results);
+					resultMap.put(queryName, results);
 				}
+
 			}
-			Collections.sort(results);
+			return resultMap;
 		} catch (Exception e) {
 			System.out.println("There was probably an error with the path");
 			return null;
 		}
-		return null;
+
 	}
 
 	/**

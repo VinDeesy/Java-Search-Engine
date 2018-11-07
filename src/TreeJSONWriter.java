@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -301,24 +302,102 @@ public class TreeJSONWriter {
 	 * @param writer  bufferedwriter
 	 * 
 	 */
-	public static void printSearch(ArrayList<Result> results, BufferedWriter writer) throws IOException {
+	public static void printSearch(TreeMap<String, ArrayList<Result>> results, BufferedWriter writer)
+			throws IOException {
 
-//		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
-//
-//		writer.write("[");
-//
-//		if (results == null || results.isEmpty()) {
-//			writer.write(System.lineSeparator() + "]");
-//		}
-//
-//		else {
-//			writer.write(System.lineSeparator());
-//			indent(1, writer);
-//			writer.write("{");
-//			writer.write(System.lineSeparator());
-//
-//			int i = 0;
-//
+		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
+
+		writer.write("[");
+
+		if (results == null || results.isEmpty()) {
+			writer.write(System.lineSeparator() + "]");
+		}
+
+		else {
+			writer.write(System.lineSeparator());
+			indent(1, writer);
+			writer.write("{");
+			writer.write(System.lineSeparator());
+
+			int i = 0;
+
+			for (Entry<String, ArrayList<Result>> query : results.entrySet()) {
+
+				indent(2, writer);
+
+				quote("queries", writer);
+				writer.write(": ");
+
+				quote(query.getKey(), writer);
+				writer.write("," + System.lineSeparator());
+				indent(2, writer);
+				quote("results", writer);
+				writer.write(":");
+				writer.write(" [" + System.lineSeparator());
+
+				for (Result result : query.getValue()) {
+
+					if (result == null) {
+						indent(2, writer);
+						writer.write("]" + System.lineSeparator());
+					} else {
+						indent(3, writer);
+
+						writer.write("{" + System.lineSeparator());
+
+						indent(4, writer);
+						quote("where", writer);
+						writer.write(": ");
+						quote(result.file, writer);
+						writer.write(",");
+						writer.write(System.lineSeparator());
+
+						indent(4, writer);
+						quote("count", writer);
+						writer.write(": ");
+
+						writer.write(result.count + "," + System.lineSeparator());
+						indent(4, writer);
+
+						quote("score", writer);
+						writer.write(": ");
+						writer.write(FORMATTER.format(result.score) + System.lineSeparator());
+
+						indent(3, writer);
+
+						if (query.getValue().indexOf(result) == query.getValue().size() - 1) {
+							writer.write("}");
+							writer.write(System.lineSeparator());
+
+							indent(2, writer);
+							writer.write("]" + System.lineSeparator());
+						} else {
+							writer.write("}," + System.lineSeparator());
+							indent(2, writer);
+							writer.write("{" + System.lineSeparator());
+						}
+
+					}
+
+				}
+
+				if (query == results.lastEntry()) {
+					indent(1, writer);
+					writer.write("}" + System.lineSeparator());
+				} else {
+					indent(1, writer);
+					writer.write("}," + System.lineSeparator());
+					indent(1, writer);
+					writer.write("{" + System.lineSeparator());
+
+				}
+
+			}
+			writer.write("]");
+
+			i++;
+
+		}
 //			for (Result result : results) {
 //
 //				indent(2, writer);

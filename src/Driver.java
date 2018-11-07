@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Driver {
@@ -75,7 +76,7 @@ public class Driver {
 		}
 
 		Boolean exact = parser.hasFlag("-exact");
-		ArrayList<Result> results = null;
+		TreeMap<String, ArrayList<Result>> results = null;
 
 		if (parser.hasValue("-search")) {
 
