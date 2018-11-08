@@ -96,7 +96,7 @@ public class Queries {
 				ArrayList<Result> resultList = null;
 
 				QueryTask task = new QueryTask(query, index, resultList, results, exact, queryLine, threadedIndex);
-
+				queue.execute(task);
 			}
 			queue.finish();
 			queue.shutdown();

@@ -153,7 +153,7 @@ public class InvertedThreaded extends InvertedIndex {
 
 						if (!lookup.containsKey(file.getKey())) {
 							Result result = new Result(file.getValue().size(), file.getKey(),
-									locations.get(file.getKey()));
+									index.locations.get(file.getKey()));
 							results.add(result);
 							lookup.put(file.getKey(), result);
 						} else {
@@ -199,7 +199,7 @@ public class InvertedThreaded extends InvertedIndex {
 
 							if (!lookup.containsKey(file.getKey())) {
 								Result result = new Result(file.getValue().size(), file.getKey(),
-										locations.get(file.getKey()));
+										index.locations.get(file.getKey()));
 								results.add(result);
 								lookup.put(file.getKey(), result);
 							} else {
