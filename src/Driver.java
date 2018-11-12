@@ -68,8 +68,6 @@ public class Driver {
 			} catch (Exception e) {
 				System.out.println("There was an error retrieving the locations file");
 			}
-		} else {
-			System.out.println("No locations flag, not printing locations to file");
 		}
 
 		Boolean exact = parser.hasFlag("-exact");
@@ -96,8 +94,6 @@ public class Driver {
 				resultsFile = Paths.get(parser.getString("-results"));
 			} else {
 				resultsFile = Paths.get("results.json");
-
-				System.out.println("NO result path given, using results.json");
 			}
 			try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8);) {
 

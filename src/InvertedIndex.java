@@ -160,7 +160,6 @@ public class InvertedIndex {
 			return results;
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			System.out.println("There was an error with searching the index");
 		}
 		return null;
@@ -209,7 +208,6 @@ public class InvertedIndex {
 			return results;
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			System.out.println("There was probably an error with the path");
 
 		}
