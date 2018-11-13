@@ -19,7 +19,7 @@ public class InvertedIndex {
 	 * Stores a mapping of words to the positions the words were found.
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	protected final TreeMap<String, Integer> locations;
+	protected final TreeMap<String, Integer> locations; // TODO private
 
 	/**
 	 * Initializes the index.
@@ -42,6 +42,19 @@ public class InvertedIndex {
 		index.get(word).putIfAbsent(fileName, new TreeSet<Integer>());
 		return index.get(word).get(fileName).add(position);
 
+		/*
+		 * TODO Here, every time you see fileName, increase the word count by 1
+		 * 
+		index.putIfAbsent(word, new TreeMap<>());
+		index.get(word).putIfAbsent(fileName, new TreeSet<Integer>());
+		boolean result = index.get(word).get(fileName).add(position);
+		
+		if (result) {
+		 	update the location map here
+		}
+		
+		return result;
+		 */
 	}
 
 	/**
@@ -56,6 +69,11 @@ public class InvertedIndex {
 		return index.get(word) == null ? 0 : index.get(word).size();
 	}
 
+	/**
+	 * TODO Forgot to javadoc, also... remove!
+	 * @param location
+	 * @param count
+	 */
 	public void addLocation(String location, Integer count) {
 		locations.put(location, count);
 	}
@@ -128,13 +146,12 @@ public class InvertedIndex {
 	 * @param queries query words to search our index
 	 * @return TreeMap of results
 	 */
-
-	public ArrayList<Result> searchExact(TreeSet<String> query) {
-
+	public ArrayList<Result> searchExact(TreeSet<String> query) { // TODO Collection<String>
+		// TODO Remove the try/catch
 		try {
 
 			ArrayList<Result> results = new ArrayList<>();
-			Map<String, Result> lookup = new TreeMap<>();
+			Map<String, Result> lookup = new TreeMap<>(); // TODO HashMap
 
 			for (String word : query) {
 
@@ -179,12 +196,28 @@ public class InvertedIndex {
 			ArrayList<Result> results = new ArrayList<>();
 			Map<String, Result> lookup = new TreeMap<>();
 
+			/*
+			 * First, you need to swap the loops
+			 * first loop through query words
+			 * then loop through index entries
+			 * 
+			 * if we can start in the "right" place then as soon as we find a key
+			 * that no longer starts with our query we can break out of our loop
+			 * 
+			 * to start in the right place, look at what happens when you give
+			 * tailMap or headMap something that isn't a key in your map!
+			 * choose the one that makes sense for this problem
+			 * 
+			 * https://github.com/usf-cs212-fall2018/lectures/blob/master/Data%20Structures/src/FindDemo.java
+			 */
+			
 			for (Entry<String, TreeMap<String, TreeSet<Integer>>> indexWord : index.entrySet()) {
 
 				for (String word : query) {
 
 					if (indexWord.getKey().startsWith(word)) {
 
+						// TODO Pull out this for loop into a private void searchHelper(entry, list, lookup)
 						for (Entry<String, TreeSet<Integer>> file : index.get(indexWord.getKey()).entrySet()) {
 
 							if (!lookup.containsKey(file.getKey())) {
@@ -239,7 +272,7 @@ public class InvertedIndex {
 	public void locationJSON(Path location) {
 		try (BufferedWriter writer = Files.newBufferedWriter(location, StandardCharsets.UTF_8);) {
 			TreeJSONWriter.printLocations(locations, writer);
-		} catch (IOException e) {
+		} catch (IOException e) { // TODO throw exception to Driver
 
 			System.out.println("Error!");
 		}

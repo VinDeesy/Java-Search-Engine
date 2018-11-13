@@ -23,7 +23,7 @@ public class Driver {
 
 		parser.parse(args);
 
-		Path inputPath;
+		Path inputPath; // TODO Move it to where you define it
 
 		InvertedIndex index = new InvertedIndex();
 
@@ -41,7 +41,7 @@ public class Driver {
 
 		}
 
-		Path outputPath = null;
+		Path outputPath = null; // TODO Move inside the if
 
 		if (parser.hasFlag("-index")) {
 
@@ -56,8 +56,10 @@ public class Driver {
 
 		}
 
-		Path locations;
+		Path locations; // TODO Move
 		if (parser.hasFlag("-locations")) {
+			
+			// TODO locations = parser.getPath("-locations", Paths.get("locations.json"));
 			if (parser.hasValue("-locations")) {
 				locations = Paths.get(parser.getString("-locations"));
 			} else {
@@ -82,7 +84,7 @@ public class Driver {
 			try {
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				e.printStackTrace(); // TODO 
 				System.out.println("There was an error with your query file");
 			}
 		}
@@ -99,7 +101,7 @@ public class Driver {
 
 				query.printSearch(writer);
 			} catch (Exception e) {
-				e.printStackTrace();
+				e.printStackTrace(); // TODO 
 				System.out.println("There was an error with printing the results");
 			}
 		}

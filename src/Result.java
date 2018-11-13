@@ -1,6 +1,7 @@
 
 public class Result implements Comparable<Result> {
 
+	// TODO private, final where possible (file and total)
 	public int count;
 	public String file;
 	public double score;
@@ -42,9 +43,9 @@ public class Result implements Comparable<Result> {
 	 * @return integer c of comparison
 	 * 
 	 */
-
 	@Override
 	public int compareTo(Result other) {
+		// TODO variable name
 		int c = Double.compare(other.score, this.score);
 
 		if (c == 0) {

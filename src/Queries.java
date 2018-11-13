@@ -12,10 +12,12 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class Queries {
 
+	// TODO private, final where possible
+	
 	public TreeMap<String, ArrayList<Result>> results; // Data structure storing search results
 	InvertedIndex index;
 
-	/*
+	/**
 	 * Initializes the Queries
 	 */
 	public Queries(InvertedIndex index) {
@@ -50,6 +52,8 @@ public class Queries {
 
 				}
 				String queryLine = String.join(" ", query);
+				
+				// TODO if (queryLine.isEmpty() || results.containsKey(queryLine)) {
 				if (queryLine == "") {
 					continue;
 				}
@@ -65,13 +69,15 @@ public class Queries {
 
 			}
 
-		} catch (Exception e) {
+		} catch (Exception e) { // TODO Remove the catch, throw the exception to Driver
 			System.out.println("There was an error processing the query file");
 
 		}
 
 	}
 
+	// TODO Change the parameter to a Path and create the writer in the method
+	// TODO Simliar to your write methods in your inverted index
 	/**
 	 * Retrieves and parses query from a text file
 	 * 
