@@ -176,6 +176,14 @@ public class InvertedIndex {
 
 	}
 
+	/**
+	 * Helper method to iterate through found words in index
+	 *
+	 * @param word    word to search index
+	 * @param results list of results
+	 * @param lookup  map containing results we have already created
+	 * @return none
+	 */
 	private void searchHelper(String word, ArrayList<Result> results, Map<String, Result> lookup) {
 
 		for (Entry<String, TreeSet<Integer>> file : index.get(word).entrySet()) {
