@@ -73,7 +73,7 @@ public class Queries {
 	/**
 	 * Retrieves and parses query from a text file
 	 * 
-	 * @param writer writer to write JSON
+	 * @param path path to result writing file
 	 * @return none
 	 * 
 	 */

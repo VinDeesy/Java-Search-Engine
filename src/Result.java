@@ -58,14 +58,35 @@ public class Result implements Comparable<Result> {
 		return compare;
 	}
 
+	/**
+	 * Getter for result count
+	 * 
+	 * @param none
+	 * @return count of occurrences
+	 * 
+	 */
 	public int getCount() {
 		return count;
 	}
 
+	/**
+	 * Getter for result score
+	 * 
+	 * @param none
+	 * @return score of result
+	 * 
+	 */
 	public double getScore() {
 		return score;
 	}
 
+	/**
+	 * Getter for file
+	 * 
+	 * @param none
+	 * @return file of result
+	 * 
+	 */
 	public String getFile() {
 		return file;
 	}

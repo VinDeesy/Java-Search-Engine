@@ -77,9 +77,8 @@ public class Driver {
 			}
 		}
 
-		Path resultsFile;
 		if (parser.hasFlag("-results")) {
-
+			Path resultsFile;
 			if (parser.hasValue("-results")) {
 				resultsFile = Paths.get(parser.getString("-results"));
 			} else {
