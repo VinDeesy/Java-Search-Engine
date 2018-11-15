@@ -23,12 +23,10 @@ public class Driver {
 
 		parser.parse(args);
 
-		Path inputPath; // TODO Move it to where you define it
-
 		InvertedIndex index = new InvertedIndex();
 
 		if (parser.hasValue("-path")) {
-			inputPath = Paths.get(parser.getString("-path"));
+			Path inputPath = Paths.get(parser.getString("-path"));
 
 			try {
 				InvertedIndexBuilder.addFiles(inputPath, index);
@@ -41,11 +39,9 @@ public class Driver {
 
 		}
 
-		Path outputPath = null; // TODO Move inside the if
-
 		if (parser.hasFlag("-index")) {
 
-			outputPath = parser.getPath("-index", Paths.get("index.json"));
+			Path outputPath = parser.getPath("-index", Paths.get("index.json"));
 			try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);) {
 
 				index.toJSON(outputPath);
@@ -56,15 +52,10 @@ public class Driver {
 
 		}
 
-		Path locations; // TODO Move
 		if (parser.hasFlag("-locations")) {
-			
-			// TODO locations = parser.getPath("-locations", Paths.get("locations.json"));
-			if (parser.hasValue("-locations")) {
-				locations = Paths.get(parser.getString("-locations"));
-			} else {
-				locations = Paths.get("locations.json");
-			}
+
+			Path locations = parser.getPath("-locations", Paths.get("locations.json"));
+
 			try {
 				index.locationJSON(locations);
 			} catch (Exception e) {
@@ -78,13 +69,10 @@ public class Driver {
 		if (parser.hasValue("-search")) {
 
 			Path queryFile = Paths.get(parser.getString("-search"));
-
-			query.getQueries(queryFile, exact);
-
 			try {
+				query.getQueries(queryFile, exact);
 
 			} catch (Exception e) {
-				e.printStackTrace(); // TODO 
 				System.out.println("There was an error with your query file");
 			}
 		}
@@ -97,11 +85,10 @@ public class Driver {
 			} else {
 				resultsFile = Paths.get("results.json");
 			}
-			try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8);) {
+			try {
 
-				query.printSearch(writer);
+				query.printSearch(resultsFile);
 			} catch (Exception e) {
-				e.printStackTrace(); // TODO 
 				System.out.println("There was an error with printing the results");
 			}
 		}

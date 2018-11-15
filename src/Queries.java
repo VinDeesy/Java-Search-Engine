@@ -12,10 +12,8 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class Queries {
 
-	// TODO private, final where possible
-	
-	public TreeMap<String, ArrayList<Result>> results; // Data structure storing search results
-	InvertedIndex index;
+	private final TreeMap<String, ArrayList<Result>> results; // Data structure storing search results
+	private final InvertedIndex index;
 
 	/**
 	 * Initializes the Queries
@@ -31,53 +29,47 @@ public class Queries {
 	 * @param path  location to text file
 	 * @param exact partial or exact search
 	 * @return none
+	 * @throws IOException
 	 * 
 	 */
-	public void getQueries(Path path, boolean exact) {
+	public void getQueries(Path path, boolean exact) throws IOException {
 
-		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);) {
+		BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
 
-			SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+		SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 
-			String line = null;
+		String line = null;
 
-			while ((line = reader.readLine()) != null) {
+		while ((line = reader.readLine()) != null) {
 
-				String[] cleaned = TextParser.parse(line);
+			String[] cleaned = TextParser.parse(line);
 
-				TreeSet<String> query = new TreeSet<>();
+			TreeSet<String> query = new TreeSet<>();
 
-				for (String string : cleaned) {
-					query.add(stemmer.stem(string).toString());
-
-				}
-				String queryLine = String.join(" ", query);
-				
-				// TODO if (queryLine.isEmpty() || results.containsKey(queryLine)) {
-				if (queryLine == "") {
-					continue;
-				}
-				ArrayList<Result> resultList;
-				if (exact) {
-
-					resultList = index.searchExact(query);
-
-				} else {
-					resultList = index.searchPartial(query);
-				}
-				results.put(queryLine, resultList);
+			for (String string : cleaned) {
+				query.add(stemmer.stem(string).toString());
 
 			}
+			String queryLine = String.join(" ", query);
 
-		} catch (Exception e) { // TODO Remove the catch, throw the exception to Driver
-			System.out.println("There was an error processing the query file");
+			if (queryLine.isEmpty() || results.containsKey(queryLine)) {
+
+				continue;
+			}
+			ArrayList<Result> resultList;
+			if (exact) {
+
+				resultList = index.searchExact(query);
+
+			} else {
+				resultList = index.searchPartial(query);
+			}
+			results.put(queryLine, resultList);
 
 		}
 
 	}
 
-	// TODO Change the parameter to a Path and create the writer in the method
-	// TODO Simliar to your write methods in your inverted index
 	/**
 	 * Retrieves and parses query from a text file
 	 * 
@@ -85,9 +77,12 @@ public class Queries {
 	 * @return none
 	 * 
 	 */
-	public void printSearch(BufferedWriter writer) throws IOException {
+	public void printSearch(Path resultsFile) throws IOException {
+
+		BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8);
 
 		TreeJSONWriter.printSearch(results, writer);
+		writer.close();
 	}
 
 }

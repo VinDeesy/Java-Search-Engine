@@ -43,7 +43,6 @@ public class InvertedIndexBuilder {
 		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
 
 		{
-			Integer numWords = 0;
 			Integer position = 0;
 			SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 			String fileName = path.toString();
@@ -55,10 +54,6 @@ public class InvertedIndexBuilder {
 
 				for (String string : cleaned) {
 					index.add(stemmer.stem(string).toString(), fileName, ++position);
-				}
-				numWords += cleaned.length;
-				if (numWords > 0) {
-					index.addLocation(path.toString(), numWords);
 				}
 
 			}

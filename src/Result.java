@@ -1,11 +1,10 @@
 
 public class Result implements Comparable<Result> {
 
-	// TODO private, final where possible (file and total)
-	public int count;
-	public String file;
-	public double score;
-	private int total;
+	private int count;
+	private final String file;
+	private double score;
+	private final int total;
 
 	/**
 	 * Creates a new Result object and calculates the score
@@ -45,18 +44,30 @@ public class Result implements Comparable<Result> {
 	 */
 	@Override
 	public int compareTo(Result other) {
-		// TODO variable name
-		int c = Double.compare(other.score, this.score);
 
-		if (c == 0) {
-			c = Integer.compare(other.count, this.count);
+		int compare = Double.compare(other.score, this.score);
+
+		if (compare == 0) {
+			compare = Integer.compare(other.count, this.count);
 		}
 
-		if (c == 0) {
-			c = this.file.compareTo(other.file);
+		if (compare == 0) {
+			compare = this.file.compareTo(other.file);
 		}
 
-		return c;
+		return compare;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public double getScore() {
+		return score;
+	}
+
+	public String getFile() {
+		return file;
 	}
 
 }
