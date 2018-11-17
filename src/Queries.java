@@ -10,6 +10,8 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
+// TODO Make make this class name a bit more descriptive. QueryFileParser? SearchResultBuilder?
+
 public class Queries {
 
 	private final TreeMap<String, ArrayList<Result>> results; // Data structure storing search results
@@ -48,24 +50,23 @@ public class Queries {
 
 			for (String string : cleaned) {
 				query.add(stemmer.stem(string).toString());
-
 			}
+			
 			String queryLine = String.join(" ", query);
 
 			if (queryLine.isEmpty() || results.containsKey(queryLine)) {
-
 				continue;
 			}
+			
 			ArrayList<Result> resultList;
+			
 			if (exact) {
-
 				resultList = index.searchExact(query);
-
 			} else {
 				resultList = index.searchPartial(query);
 			}
+			
 			results.put(queryLine, resultList);
-
 		}
 
 	}
@@ -78,7 +79,7 @@ public class Queries {
 	 * 
 	 */
 	public void printSearch(Path resultsFile) throws IOException {
-
+		// TODO TRY-WITH-RESOURCES!!!!!
 		BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8);
 
 		TreeJSONWriter.printSearch(results, writer);

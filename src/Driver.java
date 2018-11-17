@@ -63,9 +63,10 @@ public class Driver {
 			}
 		}
 
+		// TODO Move this inside the if block that uses it
 		Boolean exact = parser.hasFlag("-exact");
 
-		Queries query = new Queries(index);
+		Queries query = new Queries(index); // TODO Move this up to the top of main() method with the other definitions
 		if (parser.hasValue("-search")) {
 
 			Path queryFile = Paths.get(parser.getString("-search"));
@@ -79,6 +80,7 @@ public class Driver {
 
 		if (parser.hasFlag("-results")) {
 			Path resultsFile;
+			// TODO Use the better version of parser.getPath(..., defaultPath)
 			if (parser.hasValue("-results")) {
 				resultsFile = Paths.get(parser.getString("-results"));
 			} else {
