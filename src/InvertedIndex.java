@@ -45,6 +45,8 @@ public class InvertedIndex {
 		boolean result = index.get(word).get(fileName).add(position);
 
 		if (result) {
+			// TODO Assumes position is always increasing, not necessarily a general solution.
+			// Try: locations.put(fileName, Math.max(locations.getOrDefault(fileName, 0), position))
 			locations.put(fileName, position);
 		}
 

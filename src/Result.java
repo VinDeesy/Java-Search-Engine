@@ -16,7 +16,6 @@ public class Result implements Comparable<Result> {
 	 * @return number of times the word was found
 	 */
 	public Result(int count, String file, int total) {
-
 		this.count = count;
 		this.file = file;
 		this.total = total;
