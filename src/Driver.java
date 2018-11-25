@@ -24,7 +24,7 @@ public class Driver {
 		parser.parse(args);
 
 		InvertedIndex index = new InvertedIndex();
-
+		QueryFileParser query = new QueryFileParser(index);
 		if (parser.hasValue("-path")) {
 			Path inputPath = Paths.get(parser.getString("-path"));
 
@@ -63,12 +63,8 @@ public class Driver {
 			}
 		}
 
-		// TODO Move this inside the if block that uses it
-		Boolean exact = parser.hasFlag("-exact");
-
-		Queries query = new Queries(index); // TODO Move this up to the top of main() method with the other definitions
 		if (parser.hasValue("-search")) {
-
+			Boolean exact = parser.hasFlag("-exact");
 			Path queryFile = Paths.get(parser.getString("-search"));
 			try {
 				query.getQueries(queryFile, exact);
@@ -79,13 +75,8 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-results")) {
-			Path resultsFile;
-			// TODO Use the better version of parser.getPath(..., defaultPath)
-			if (parser.hasValue("-results")) {
-				resultsFile = Paths.get(parser.getString("-results"));
-			} else {
-				resultsFile = Paths.get("results.json");
-			}
+			Path resultsFile = parser.getPath("-results", Paths.get("results.json"));
+
 			try {
 
 				query.printSearch(resultsFile);
