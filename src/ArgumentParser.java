@@ -218,6 +218,19 @@ public class ArgumentParser {
 		}
 	}
 
+	/**
+	 * Returns the flag value if it contains a value
+	 * 
+	 * @param flag
+	 * @return
+	 */
+	public String getValue(String flag) {
+		if (map.containsKey(flag) && map.get(flag) != null && hasValue(flag) == true) {
+			return map.get(flag);
+		}
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		return this.map.toString();

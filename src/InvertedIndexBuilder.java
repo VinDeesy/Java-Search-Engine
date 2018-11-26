@@ -38,70 +38,26 @@ public class InvertedIndexBuilder {
 	 * 
 	 */
 
-	public synchronized static void addFile(Path path, InvertedIndex index) throws IOException {
+	public static void addFile(Path path, InvertedIndex index) throws IOException {
 
-		synchronized (index) {
+		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
 
-			try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
+		{
+			Integer position = 0;
+			SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+			String fileName = path.toString();
+			String line = null;
 
-			{
-				Integer numWords = 0;
-				Integer position = 0;
-				SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-				String fileName = path.toString();
-				String line = null;
+			while ((line = reader.readLine()) != null) {
 
-				while ((line = reader.readLine()) != null) {
+				String[] cleaned = TextParser.parse(line);
 
-					String[] cleaned = TextParser.parse(line);
-
-					for (String string : cleaned) {
-						index.add(stemmer.stem(string).toString(), fileName, ++position);
-					}
-					numWords += cleaned.length;
-					if (numWords > 0) {
-						index.addLocation(path.toString(), numWords);
-					}
-
+				for (String string : cleaned) {
+					index.add(stemmer.stem(string).toString(), fileName, ++position);
 				}
 
 			}
-		}
-	}
 
-	public static void addFileThreaded(Path root, InvertedIndex index, int threads) throws IOException {
-
-		WorkQueue queue = new WorkQueue(threads);
-
-		ArrayList<Path> pathList = FileTraverser.traverse(root);
-
-		for (Path path : pathList) {
-			FileTask task = new FileTask(path, index);
-			queue.execute(task);
-
-		}
-
-		queue.finish();
-		queue.shutdown();
-	}
-
-	private static class FileTask implements Runnable {
-
-		Path path;
-		InvertedIndex index;
-
-		public FileTask(Path path, InvertedIndex index) {
-			this.index = index;
-			this.path = path;
-		}
-
-		public void run() {
-			try {
-				addFile(path, index);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 	}

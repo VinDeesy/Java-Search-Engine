@@ -1,9 +1,9 @@
 public class Result implements Comparable<Result> {
 
-	public int count;
-	public String file;
-	public double score;
-	private int total;
+	private int count;
+	private final String file;
+	private double score;
+	private final int total;
 
 	/**
 	 * Creates a new Result object and calculates the score
@@ -15,7 +15,6 @@ public class Result implements Comparable<Result> {
 	 * @return number of times the word was found
 	 */
 	public Result(int count, String file, int total) {
-
 		this.count = count;
 		this.file = file;
 		this.total = total;
@@ -41,20 +40,53 @@ public class Result implements Comparable<Result> {
 	 * @return integer c of comparison
 	 * 
 	 */
-
 	@Override
 	public int compareTo(Result other) {
-		int c = Double.compare(other.score, this.score);
 
-		if (c == 0) {
-			c = Integer.compare(other.count, this.count);
+		int compare = Double.compare(other.score, this.score);
+
+		if (compare == 0) {
+			compare = Integer.compare(other.count, this.count);
 		}
 
-		if (c == 0) {
-			c = this.file.compareTo(other.file);
+		if (compare == 0) {
+			compare = this.file.compareTo(other.file);
 		}
 
-		return c;
+		return compare;
+	}
+
+	/**
+	 * Getter for result count
+	 * 
+	 * @param none
+	 * @return count of occurrences
+	 * 
+	 */
+	public int getCount() {
+		return count;
+	}
+
+	/**
+	 * Getter for result score
+	 * 
+	 * @param none
+	 * @return score of result
+	 * 
+	 */
+	public double getScore() {
+		return score;
+	}
+
+	/**
+	 * Getter for file
+	 * 
+	 * @param none
+	 * @return file of result
+	 * 
+	 */
+	public String getFile() {
+		return file;
 	}
 
 }

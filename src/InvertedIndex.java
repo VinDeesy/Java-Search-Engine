@@ -4,7 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -18,8 +20,8 @@ public class InvertedIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	public TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	protected final TreeMap<String, Integer> locations;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private final TreeMap<String, Integer> locations;
 
 	/**
 	 * Initializes the index.
@@ -40,7 +42,15 @@ public class InvertedIndex {
 
 		index.putIfAbsent(word, new TreeMap<>());
 		index.get(word).putIfAbsent(fileName, new TreeSet<Integer>());
-		return index.get(word).get(fileName).add(position);
+		boolean result = index.get(word).get(fileName).add(position);
+
+		if (result) {
+
+			locations.put(fileName, Math.max(locations.getOrDefault(fileName, 0), position));
+			locations.put(fileName, position);
+		}
+
+		return result;
 
 	}
 
@@ -54,10 +64,6 @@ public class InvertedIndex {
 	public int count(String word) {
 
 		return index.get(word) == null ? 0 : index.get(word).size();
-	}
-
-	public void addLocation(String location, Integer count) {
-		locations.put(location, count);
 	}
 
 	/**
@@ -128,42 +134,20 @@ public class InvertedIndex {
 	 * @param queries query words to search our index
 	 * @return TreeMap of results
 	 */
+	public ArrayList<Result> searchExact(Collection<String> query) {
 
-	public ArrayList<Result> searchExact(TreeSet<String> query) {
+		ArrayList<Result> results = new ArrayList<>();
+		Map<String, Result> lookup = new HashMap<>();
 
-		try {
+		for (String word : query) {
 
-			ArrayList<Result> results = new ArrayList<>();
-			Map<String, Result> lookup = new TreeMap<>();
-
-			for (String word : query) {
-
-				if (index.containsKey(word)) {
-
-					for (Entry<String, TreeSet<Integer>> file : index.get(word).entrySet()) {
-
-						if (!lookup.containsKey(file.getKey())) {
-							Result result = new Result(file.getValue().size(), file.getKey(),
-									locations.get(file.getKey()));
-							results.add(result);
-							lookup.put(file.getKey(), result);
-						} else {
-							lookup.get(file.getKey()).updateCount(file.getValue().size());
-						}
-
-					}
-
-				}
-
+			if (index.containsKey(word)) {
+				searchHelper(word, results, lookup);
 			}
-			Collections.sort(results);
-			return results;
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("There was an error with searching the index");
 		}
-		return null;
+		Collections.sort(results);
+		return results;
 
 	}
 
@@ -175,46 +159,46 @@ public class InvertedIndex {
 	 */
 	public ArrayList<Result> searchPartial(TreeSet<String> query) {
 
-		try {
+		ArrayList<Result> results = new ArrayList<>();
+		Map<String, Result> lookup = new HashMap<>();
 
-			ArrayList<Result> results = new ArrayList<>();
-			Map<String, Result> lookup = new TreeMap<>();
+		for (String queryWord : query) {
 
-			for (Entry<String, TreeMap<String, TreeSet<Integer>>> indexWord : index.entrySet()) {
-
-				for (String word : query) {
-
-					if (indexWord.getKey().startsWith(word)) {
-
-						for (Entry<String, TreeSet<Integer>> file : index.get(indexWord.getKey()).entrySet()) {
-
-							if (!lookup.containsKey(file.getKey())) {
-								Result result = new Result(file.getValue().size(), file.getKey(),
-										locations.get(file.getKey()));
-								results.add(result);
-								lookup.put(file.getKey(), result);
-							} else {
-								lookup.get(file.getKey()).updateCount(file.getValue().size());
-							}
-
-						}
-
-					}
-
+			for (String indexWord : index.tailMap(queryWord).keySet()) {
+				if (indexWord.startsWith(queryWord)) {
+					searchHelper(indexWord, results, lookup);
+				} else {
+					break;
 				}
+			}
+		}
 
+		Collections.sort(results);
+		return results;
+
+	}
+
+	/**
+	 * Helper method to iterate through found words in index
+	 *
+	 * @param word    word to search index
+	 * @param results list of results
+	 * @param lookup  map containing results we have already created
+	 * @return none
+	 */
+	private void searchHelper(String word, ArrayList<Result> results, Map<String, Result> lookup) {
+
+		for (Entry<String, TreeSet<Integer>> file : index.get(word).entrySet()) {
+
+			if (!lookup.containsKey(file.getKey())) {
+				Result result = new Result(file.getValue().size(), file.getKey(), locations.get(file.getKey()));
+				results.add(result);
+				lookup.put(file.getKey(), result);
+			} else {
+				lookup.get(file.getKey()).updateCount(file.getValue().size());
 			}
 
-			Collections.sort(results);
-			return results;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("There was probably an error with the path");
-
 		}
-		return null;
-
 	}
 
 	/**
@@ -236,14 +220,14 @@ public class InvertedIndex {
 	 * 
 	 * @param path location to output JSON data
 	 * @return null
+	 * @throws IOException
 	 * 
 	 */
-	public void locationJSON(Path location) {
-		try (BufferedWriter writer = Files.newBufferedWriter(location, StandardCharsets.UTF_8);) {
+	public void locationJSON(Path location) throws IOException {
+		BufferedWriter writer = Files.newBufferedWriter(location, StandardCharsets.UTF_8);
+		{
 			TreeJSONWriter.printLocations(locations, writer);
-		} catch (IOException e) {
-
-			System.out.println("Error!");
+			writer.close();
 		}
 
 	}

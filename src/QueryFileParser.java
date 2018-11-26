@@ -11,12 +11,12 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
-public class Queries {
+public class QueryFileParser {
 
 	public TreeMap<String, ArrayList<Result>> results;
 	InvertedIndex index;
 
-	public Queries(InvertedIndex index) {
+	public QueryFileParser(InvertedIndex index) {
 		this.results = new TreeMap<>();
 		this.index = index;
 	}
@@ -146,9 +146,13 @@ public class Queries {
 
 	}
 
-	public void printSearch(BufferedWriter writer) throws IOException {
+	public void printSearch(Path resultsFile) throws IOException {
 
-		TreeJSONWriter.printSearch(results, writer);
+		try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8)) {
+
+			TreeJSONWriter.printSearch(results, writer);
+		}
+
 	}
 
 }

@@ -57,15 +57,6 @@ public class InvertedThreaded extends InvertedIndex {
 		}
 	}
 
-	public void addLocation(String location, Integer count) {
-		lock.lockReadWrite();
-		try {
-			super.addLocation(location, count);
-		} finally {
-			lock.unlockReadWrite();
-		}
-	}
-
 	/**
 	 * Returns the number of words stored in the index.
 	 *

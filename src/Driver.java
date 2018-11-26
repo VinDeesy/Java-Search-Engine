@@ -4,8 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.TreeMap;
 
 public class Driver {
 
@@ -25,19 +23,34 @@ public class Driver {
 
 		parser.parse(args);
 
+		InvertedIndex index = new InvertedIndex();
+		QueryFileParser query = new QueryFileParser(index);
+
 		boolean threaded = false;
 		int threads = 5;
 		if (parser.hasFlag("-threads")) {
 			threaded = true;
-			threads = 5;
+
+			if (parser.hasValue("-threads")) {
+
+				System.out.println(parser.getString("-threads"));
+				threads = Integer.parseInt(parser.getValue("-threads"));
+			}
+
+			InvertedThreaded threadSafeIndex = new InvertedThreaded();
+			index = threadSafeIndex;
+
+			try {
+				Path inputPath = Paths.get(parser.getString("-path"));
+				ThreadedIndexBuilder.addFiles(inputPath, threadSafeIndex);
+
+			} catch (Exception e) {
+
+			}
 		}
 
-		Path inputPath;
-
-		InvertedIndex index = new InvertedIndex();
-
-		if (parser.hasValue("-path")) {
-			inputPath = Paths.get(parser.getString("-path"));
+		if (parser.hasValue("-path") && !threaded) {
+			Path inputPath = Paths.get(parser.getString("-path"));
 
 			try {
 				InvertedIndexBuilder.addFiles(inputPath, index);
@@ -49,12 +62,9 @@ public class Driver {
 			System.out.println("No path specified, exiting...");
 
 		}
-
-		Path outputPath = null;
-
 		if (parser.hasFlag("-index")) {
 
-			outputPath = parser.getPath("-index", Paths.get("index.json"));
+			Path outputPath = parser.getPath("-index", Paths.get("index.json"));
 			try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);) {
 
 				index.toJSON(outputPath);
@@ -65,60 +75,41 @@ public class Driver {
 
 		}
 
-		Path locations;
 		if (parser.hasFlag("-locations")) {
-			if (parser.hasValue("-locations")) {
-				locations = Paths.get(parser.getString("-locations"));
-			} else {
-				locations = Paths.get("locations.json");
-			}
+
+			Path locations = parser.getPath("-locations", Paths.get("locations.json"));
+
 			try {
 				index.locationJSON(locations);
 			} catch (Exception e) {
 				System.out.println("There was an error retrieving the locations file");
 			}
-		} else {
-			System.out.println("No locations flag, not printing locations to file");
 		}
 
-		Boolean exact = parser.hasFlag("-exact");
-		TreeMap<String, ArrayList<Result>> results = null;
-		Queries query = new Queries(index);
 		if (parser.hasValue("-search")) {
-
+			Boolean exact = parser.hasFlag("-exact");
 			Path queryFile = Paths.get(parser.getString("-search"));
-
-			if (threaded) {
-				query.ThreadedSearch(queryFile, exact, threads);
-			} else {
-
-				query.getQueries(queryFile, exact);
-			}
-
 			try {
+				if (threaded) {
+					query.ThreadedSearch(queryFile, exact, threads);
+				} else {
+
+					query.getQueries(queryFile, exact);
+				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
 				System.out.println("There was an error with your query file");
 			}
 		}
 
-		Path resultsFile;
 		if (parser.hasFlag("-results")) {
+			Path resultsFile = parser.getPath("-results", Paths.get("results.json"));
 
-			if (parser.hasValue("-results")) {
-				resultsFile = Paths.get(parser.getString("-results"));
-			} else {
-				resultsFile = Paths.get("results.json");
+			try {
 
-				System.out.println("NO result path given, using results.json");
-			}
-			try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8);) {
-
-				query.printSearch(writer);
+				query.printSearch(resultsFile);
 			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("Something got fuckedup with printing the results");
+				System.out.println("There was an error with printing the results");
 			}
 		}
 

@@ -307,16 +307,12 @@ public class TreeJSONWriter {
 
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 
-		System.out.println("Hello from JSON?");
-
 		writer.write("[");
 
 		writer.write(System.lineSeparator());
 		indent(1, writer);
 		writer.write("{");
 		writer.write(System.lineSeparator());
-
-		int i = 0;
 
 		for (Entry<String, ArrayList<Result>> query : results.entrySet()) {
 
@@ -352,7 +348,7 @@ public class TreeJSONWriter {
 						indent(4, writer);
 						quote("where", writer);
 						writer.write(": ");
-						quote(result.file, writer);
+						quote(result.getFile(), writer);
 						writer.write(",");
 						writer.write(System.lineSeparator());
 
@@ -360,12 +356,12 @@ public class TreeJSONWriter {
 						quote("count", writer);
 						writer.write(": ");
 
-						writer.write(result.count + "," + System.lineSeparator());
+						writer.write(result.getCount() + "," + System.lineSeparator());
 						indent(4, writer);
 
 						quote("score", writer);
 						writer.write(": ");
-						writer.write(FORMATTER.format(result.score) + System.lineSeparator());
+						writer.write(FORMATTER.format(result.getScore()) + System.lineSeparator());
 
 						indent(3, writer);
 
@@ -397,8 +393,6 @@ public class TreeJSONWriter {
 
 		}
 		writer.write("]");
-
-		i++;
 
 	}
 
