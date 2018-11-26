@@ -23,9 +23,6 @@ public class Driver {
 
 		parser.parse(args);
 
-		InvertedIndex index = new InvertedIndex();
-		QueryFileParser query = new QueryFileParser(index);
-
 		boolean threaded = false;
 		int threads = 5;
 		if (parser.hasFlag("-threads")) {
@@ -36,24 +33,19 @@ public class Driver {
 				System.out.println(parser.getString("-threads"));
 				threads = Integer.parseInt(parser.getValue("-threads"));
 			}
-
-			InvertedThreaded threadSafeIndex = new InvertedThreaded();
-			index = threadSafeIndex;
-
-			try {
-				Path inputPath = Paths.get(parser.getString("-path"));
-				ThreadedIndexBuilder.addFiles(inputPath, threadSafeIndex);
-
-			} catch (Exception e) {
-
-			}
 		}
 
-		if (parser.hasValue("-path") && !threaded) {
+		InvertedIndex index = new InvertedIndex();
+
+		if (parser.hasValue("-path")) {
 			Path inputPath = Paths.get(parser.getString("-path"));
 
 			try {
-				InvertedIndexBuilder.addFiles(inputPath, index);
+				if (threaded) {
+					InvertedIndexBuilder.addFileThreaded(inputPath, index, threads);
+				} else {
+					InvertedIndexBuilder.addFiles(inputPath, index);
+				}
 			} catch (IOException e) {
 				System.out.println("There was an error building the index");
 			}
@@ -62,6 +54,7 @@ public class Driver {
 			System.out.println("No path specified, exiting...");
 
 		}
+
 		if (parser.hasFlag("-index")) {
 
 			Path outputPath = parser.getPath("-index", Paths.get("index.json"));
@@ -85,7 +78,7 @@ public class Driver {
 				System.out.println("There was an error retrieving the locations file");
 			}
 		}
-
+		QueryFileParser query = new QueryFileParser(index);
 		if (parser.hasValue("-search")) {
 			Boolean exact = parser.hasFlag("-exact");
 			Path queryFile = Paths.get(parser.getString("-search"));
