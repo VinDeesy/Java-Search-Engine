@@ -36,7 +36,7 @@ public class Driver {
 		}
 
 		InvertedIndex index = new InvertedIndex();
-
+		QueryFileParser query = new QueryFileParser(index);
 		if (parser.hasValue("-path")) {
 			Path inputPath = Paths.get(parser.getString("-path"));
 
@@ -78,17 +78,23 @@ public class Driver {
 				System.out.println("There was an error retrieving the locations file");
 			}
 		}
+
 		QueryFileParser query = new QueryFileParser(index);
+
+
+
 		if (parser.hasValue("-search")) {
 			Boolean exact = parser.hasFlag("-exact");
 			Path queryFile = Paths.get(parser.getString("-search"));
 			try {
+
 				if (threaded) {
 					query.ThreadedSearch(queryFile, exact, threads);
 				} else {
 
 					query.getQueries(queryFile, exact);
 				}
+
 
 			} catch (Exception e) {
 				System.out.println("There was an error with your query file");

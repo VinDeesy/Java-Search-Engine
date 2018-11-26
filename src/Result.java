@@ -1,3 +1,4 @@
+
 public class Result implements Comparable<Result> {
 
 	private int count;
