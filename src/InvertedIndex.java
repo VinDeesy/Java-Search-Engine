@@ -40,6 +40,7 @@ public class InvertedIndex {
 
 		index.putIfAbsent(word, new TreeMap<>());
 		index.get(word).putIfAbsent(fileName, new TreeSet<Integer>());
+
 		return index.get(word).get(fileName).add(position);
 
 	}
@@ -57,6 +58,9 @@ public class InvertedIndex {
 	}
 
 	public void addLocation(String location, Integer count) {
+
+		// System.out.println("Adding: " + location);
+
 		locations.put(location, count);
 	}
 

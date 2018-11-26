@@ -1,5 +1,7 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,7 +42,11 @@ public class Driver {
 			inputPath = Paths.get(parser.getString("-path"));
 
 			try {
-				InvertedIndexBuilder.addFiles(inputPath, index);
+				if (threaded) {
+					InvertedIndexBuilder.addFileThreaded(inputPath, index, threads);
+				} else {
+					InvertedIndexBuilder.addFiles(inputPath, index);
+				}
 			} catch (IOException e) {
 				System.out.println("There was an error building the index");
 			}
@@ -48,6 +54,27 @@ public class Driver {
 		} else {
 			System.out.println("No path specified, exiting...");
 
+		}
+
+		int total = 50;
+		if (parser.hasValue("-limit")) {
+			total = Integer.parseInt(parser.getString("-limit"));
+		}
+
+		if (parser.hasValue("-url")) {
+			try {
+				URL seed = new URL(parser.getString("-url"));
+
+				WebCrawler crawler = new WebCrawler(total, seed, index);
+				try {
+					crawler.crawl(seed, total);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+				}
+
+			} catch (MalformedURLException e) {
+				System.out.println("URL Problem!");
+			}
 		}
 
 		Path outputPath = null;
