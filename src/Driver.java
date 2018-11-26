@@ -23,13 +23,29 @@ public class Driver {
 
 		parser.parse(args);
 
+		boolean threaded = false;
+		int threads = 5;
+		if (parser.hasFlag("-threads")) {
+			threaded = true;
+
+			if (parser.hasValue("-threads")) {
+
+				System.out.println(parser.getString("-threads"));
+				threads = Integer.parseInt(parser.getValue("-threads"));
+			}
+		}
+
 		InvertedIndex index = new InvertedIndex();
 		QueryFileParser query = new QueryFileParser(index);
 		if (parser.hasValue("-path")) {
 			Path inputPath = Paths.get(parser.getString("-path"));
 
 			try {
-				InvertedIndexBuilder.addFiles(inputPath, index);
+				if (threaded) {
+					InvertedIndexBuilder.addFileThreaded(inputPath, index, threads);
+				} else {
+					InvertedIndexBuilder.addFiles(inputPath, index);
+				}
 			} catch (IOException e) {
 				System.out.println("There was an error building the index");
 			}
@@ -63,11 +79,22 @@ public class Driver {
 			}
 		}
 
+		QueryFileParser query = new QueryFileParser(index);
+
+
+
 		if (parser.hasValue("-search")) {
 			Boolean exact = parser.hasFlag("-exact");
 			Path queryFile = Paths.get(parser.getString("-search"));
 			try {
-				query.getQueries(queryFile, exact);
+
+				if (threaded) {
+					query.ThreadedSearch(queryFile, exact, threads);
+				} else {
+
+					query.getQueries(queryFile, exact);
+				}
+
 
 			} catch (Exception e) {
 				System.out.println("There was an error with your query file");

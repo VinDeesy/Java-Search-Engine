@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -10,7 +11,6 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
-// TODO Make make this class name a bit more descriptive. QueryFileParser? SearchResultBuilder?
 
 public class QueryFileParser {
 
@@ -71,6 +71,7 @@ public class QueryFileParser {
 
 	}
 
+
 	/**
 	 * Retrieves and parses query from a text file
 	 * 
@@ -78,8 +79,7 @@ public class QueryFileParser {
 	 * @return none
 	 * 
 	 */
-	public void printSearch(Path resultsFile) throws IOException {
-		// TODO TRY-WITH-RESOURCES!!!!!
+  public void printSearch(Path resultsFile) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8)) {
 
 			TreeJSONWriter.printSearch(results, writer);

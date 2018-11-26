@@ -107,6 +107,11 @@ public class ArgumentParser {
 
 	}
 
+	public int parseInt() {
+
+		return 0;
+	}
+
 	/**
 	 * Determines whether the specified flag exists.
 	 *
@@ -114,7 +119,7 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag exists
 	 */
 	public boolean hasFlag(String flag) {
-
+		// TODO Should return unmodifiable set rather than boolean value
 		return map.containsKey(flag);
 
 	}
@@ -126,7 +131,7 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag is mapped to a non-null value
 	 */
 	public boolean hasValue(String flag) {
-
+		// TODO Breaks encapsulation :(
 		return map.get(flag) != null;
 
 	}
@@ -211,6 +216,19 @@ public class ArgumentParser {
 		} catch (NullPointerException e) {
 			return defaultValue;
 		}
+	}
+
+	/**
+	 * Returns the flag value if it contains a value
+	 * 
+	 * @param flag
+	 * @return
+	 */
+	public String getValue(String flag) {
+		if (map.containsKey(flag) && map.get(flag) != null && hasValue(flag) == true) {
+			return map.get(flag);
+		}
+		return null;
 	}
 
 	@Override

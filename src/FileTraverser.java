@@ -36,7 +36,10 @@ public class FileTraverser {
 	 * @return null
 	 * 
 	 */
-
+	/*
+	 * TODO Inefficient, implement like so void HelloWorld() {
+	 * System.out.println("Hello World"); }
+	 */
 	public static void traverse(Path path, ArrayList<Path> paths) throws IOException {
 		if (Files.isDirectory(path)) {
 			try (DirectoryStream<Path> listing = Files.newDirectoryStream(path)) {
