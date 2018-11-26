@@ -36,7 +36,7 @@ public class Driver {
 		}
 
 		InvertedIndex index = new InvertedIndex();
-		QueryFileParser query = new QueryFileParser(index);
+
 		if (parser.hasValue("-path")) {
 			Path inputPath = Paths.get(parser.getString("-path"));
 
@@ -81,8 +81,6 @@ public class Driver {
 
 		QueryFileParser query = new QueryFileParser(index);
 
-
-
 		if (parser.hasValue("-search")) {
 			Boolean exact = parser.hasFlag("-exact");
 			Path queryFile = Paths.get(parser.getString("-search"));
@@ -94,7 +92,6 @@ public class Driver {
 
 					query.getQueries(queryFile, exact);
 				}
-
 
 			} catch (Exception e) {
 				System.out.println("There was an error with your query file");
