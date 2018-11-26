@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+// TODO Better class names! Use your keywords!
+
 /**
  * Data structure to store strings and their positions.
  */
@@ -122,6 +124,8 @@ public class InvertedThreaded extends InvertedIndex {
 
 	}
 
+	// TODO Should be the same as everything else
+	// TODO Use the same approach as before with lock/try/super/finally/unlock
 	/**
 	 * Searches the index for exact matches from a list of queries
 	 *
@@ -216,5 +220,7 @@ public class InvertedThreaded extends InvertedIndex {
 		return null;
 
 	}
+	
+	// TODO Need to make sure every public method is overridden and locked
 
 }

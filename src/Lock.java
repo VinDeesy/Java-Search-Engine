@@ -1,4 +1,6 @@
 
+// TODO Remove old TODO comments from homework code (and fix exception handling)
+
 /**
  * A simple custom lock that allows simultaneously read operations, but
  * disallows simultaneously write and read/write operations.
@@ -51,6 +53,9 @@ public class Lock {
 
 		this.notifyAll();
 
+		/*
+		 * TODO Overnotification issue. Only call notifyAll when readers is 0.
+		 */
 	}
 
 	/**
