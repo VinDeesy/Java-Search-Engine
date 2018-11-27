@@ -41,6 +41,8 @@ public class InvertedIndex {
 		index.putIfAbsent(word, new TreeMap<>());
 		index.get(word).putIfAbsent(fileName, new TreeSet<Integer>());
 
+		// System.out.println(word);
+
 		return index.get(word).get(fileName).add(position);
 
 	}

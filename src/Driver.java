@@ -55,21 +55,23 @@ public class Driver {
 			System.out.println("No path specified, exiting...");
 
 		}
-
+		InvertedThreaded threadedIndex = new InvertedThreaded();
 		int total = 50;
 		if (parser.hasValue("-limit")) {
 			total = Integer.parseInt(parser.getString("-limit"));
 		}
-
+		boolean URL = false;
 		if (parser.hasValue("-url")) {
 			try {
+				URL = true;
 				URL seed = new URL(parser.getString("-url"));
 
-				WebCrawler crawler = new WebCrawler(total, seed, index);
+				WebCrawler crawler = new WebCrawler(total, seed, threadedIndex);
 				try {
 					crawler.crawl(seed, total);
+					index = threadedIndex;
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
 			} catch (MalformedURLException e) {
@@ -84,7 +86,7 @@ public class Driver {
 			outputPath = parser.getPath("-index", Paths.get("index.json"));
 			try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);) {
 
-				index.toJSON(outputPath);
+				threadedIndex.toJSON(outputPath);
 
 			} catch (Exception e) {
 				System.out.println("Error io open file: " + outputPath.toString());
@@ -100,7 +102,7 @@ public class Driver {
 				locations = Paths.get("locations.json");
 			}
 			try {
-				index.locationJSON(locations);
+				threadedIndex.locationJSON(locations);
 			} catch (Exception e) {
 				System.out.println("There was an error retrieving the locations file");
 			}

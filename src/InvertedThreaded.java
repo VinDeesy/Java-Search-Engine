@@ -14,12 +14,13 @@ public class InvertedThreaded extends InvertedIndex {
 	 * Stores a mapping of words to the positions the words were found.
 	 */
 
-	Lock lock;
+	private final Lock lock;
 
 	/**
 	 * Initializes the index.
 	 */
 	public InvertedThreaded() {
+		super();
 		this.lock = new Lock();
 	}
 

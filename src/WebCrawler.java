@@ -1,27 +1,28 @@
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import opennlp.tools.stemmer.snowball.SnowballStemmer;
+
 public class WebCrawler {
 
 	private final InvertedThreaded threadedIndex;
-	private final InvertedIndex index;
+
 	private final WorkQueue queue;
 	private final URL seed;
 	private int total;
 	private final List<URL> seenLinks;
 	private final Lock lock;
 
-	public WebCrawler(int total, URL seed, InvertedIndex index) {
+	public WebCrawler(int total, URL seed, InvertedThreaded index) {
 		this.seed = seed;
 		this.total = total;
 		queue = new WorkQueue();
-		threadedIndex = new InvertedThreaded();
-		seenLinks = new ArrayList<>();
+		this.seenLinks = new ArrayList<>();
 		lock = new Lock();
-		this.index = index;
+		this.threadedIndex = index;
+
 	}
 
 	public void crawl(URL url, int total) throws IOException {
@@ -29,9 +30,8 @@ public class WebCrawler {
 		// System.out.println("hey from crawler");
 
 		if (!seenLinks.contains(url) && seenLinks.size() <= total) {
-			System.out.println("hello from seen");
 			seenLinks.add(url);
-			queue.execute(new Crawler(url, seenLinks, index, threadedIndex, total));
+			queue.execute(new Crawler(url, seenLinks, threadedIndex, total));
 		}
 
 		queue.finish();
@@ -42,47 +42,52 @@ public class WebCrawler {
 
 		private URL url;
 		private final List<URL> seenLinks;
-		private final InvertedIndex index;
+
 		private final InvertedThreaded threadedIndex;
 		private int total;
 
-		public Crawler(URL url, List<URL> seenLinks, InvertedIndex index, InvertedThreaded threadedIndex, int total) {
+		public Crawler(URL url, List<URL> seenLinks, InvertedThreaded threadedIndex, int total) {
 			this.url = url;
 			this.seenLinks = seenLinks;
-			this.index = index;
 			this.threadedIndex = threadedIndex;
 			this.total = total;
 		}
 
 		public void run() {
 
-			String html = LinkParser.fetchHTML(url);
+			String html = "";
 			try {
+				html = HTMLFetcher.fetchHTML(url, 3);
 				ArrayList<URL> listOfLinks = LinkParser.listLinks(url, html);
 
-				for (URL link : listOfLinks) {
-					if (!seenLinks.contains(link)) {
-						if (seenLinks.size() >= total) {
-							break;
+				synchronized (seenLinks) {
+
+					for (URL link : listOfLinks) {
+						if (!seenLinks.contains(link)) {
+							if (seenLinks.size() >= total) {
+								break;
+							}
+							seenLinks.add(link);
+							// URL url = new URL(link);
+							queue.execute(new Crawler(link, seenLinks, threadedIndex, total));
 						}
-						seenLinks.add(link);
-						// URL url = new URL(link);
-						System.out.println("new crawler");
-						queue.execute(new Crawler(url, seenLinks, index, threadedIndex, total));
 					}
 				}
-			} catch (MalformedURLException e) {
+			} catch (IOException e) {
+				e.printStackTrace();
 
 			}
 
 			String cleaned = HTMLCleaner.stripHTML(html);
 			String[] words = TextParser.parse(cleaned);
-
+			SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 			int position = 1;
 
 			for (String word : words) {
-				index.add(word, url.toString(), position);
-				index.addLocation(url.toString(), position);
+				// System.out.println(word);
+
+				threadedIndex.add(stemmer.stem(word).toString(), url.toString(), position);
+				threadedIndex.addLocation(url.toString(), position);
 				position++;
 			}
 
@@ -105,7 +110,7 @@ public class WebCrawler {
 //			}
 //			try {
 //
-//				html = HTMLFetcher.fetchHTML(url, 3);
+//			html = HTMLFetcher.fetchHTML(url, 3);
 //
 //				if (html != null && statusCode == 200) {
 //
