@@ -81,12 +81,13 @@ public class LinkParser {
 	 * @throws MalformedURLException
 	 */
 	public static ArrayList<URL> listLinks(URL base, String html) throws MalformedURLException {
-		ArrayList<URL> links = new ArrayList<>();
-		String regex = "(?i)<a[^>]*\\s*href\\s*=\\s*\"(.+?)\\s*\"";
 		html = html.replaceAll("\\s{2,}", "");
-		URL url = null;
+		ArrayList<URL> listofLinks = new ArrayList<>();
+		String regex = "(?i)<a[^>]*\\s*href\\s*=\\s*\"(.+?)\\s*\"";
+
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(html);
+		URL url = null;
 
 		while (matcher.find()) {
 			String site = matcher.group(1);
@@ -94,7 +95,7 @@ public class LinkParser {
 				try {
 					url = new URL(base, site);
 				} catch (MalformedURLException e) {
-					System.out.println("Protocol cannot be found");
+					System.out.println("Error");
 				}
 			}
 
@@ -102,15 +103,15 @@ public class LinkParser {
 				try {
 					url = new URL(site);
 				} catch (MalformedURLException e) {
-					System.out.println("HTTP protocol cannot be found");
+					System.out.println("Error");
 				}
 			}
 
 			if (url.toString().startsWith("http")) {
-				links.add(clean(url));
+				listofLinks.add(clean(url));
 			}
 		}
-		return links;
+		return listofLinks;
 
 	}
 

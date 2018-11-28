@@ -307,8 +307,6 @@ public class TreeJSONWriter {
 
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 
-		System.out.println("Hello from JSON?");
-
 		writer.write("[");
 
 		writer.write(System.lineSeparator());

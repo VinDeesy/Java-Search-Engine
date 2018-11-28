@@ -56,19 +56,18 @@ public class Driver {
 
 		}
 		InvertedThreaded threadedIndex = new InvertedThreaded();
-		int total = 50;
+		int limit = 50;
 		if (parser.hasFlag("-limit")) {
 			try {
 				if (parser.getValue("-limit") == null) {
-					total = 1;
+					limit = 1;
 				} else {
-					total = Integer.parseInt(parser.getValue("-limit"));
+					limit = Integer.parseInt(parser.getValue("-limit"));
 				}
 			} catch (NumberFormatException e) {
 				System.out.println("number format exception");
-				total = 50;
+				limit = 50;
 			}
-			System.out.println("limit is: " + total);
 		}
 		boolean URL = false;
 		if (parser.hasValue("-url")) {
@@ -76,9 +75,9 @@ public class Driver {
 				URL = true;
 				URL seed = new URL(parser.getString("-url"));
 
-				WebCrawler crawler = new WebCrawler(total, seed, threadedIndex);
+				WebCrawler crawler = new WebCrawler(limit, seed, threadedIndex);
 				try {
-					crawler.crawl(seed, total);
+					crawler.crawl(seed, limit);
 					index = threadedIndex;
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -140,7 +139,6 @@ public class Driver {
 			try {
 
 			} catch (Exception e) {
-				e.printStackTrace();
 				System.out.println("There was an error with your query file");
 			}
 		}

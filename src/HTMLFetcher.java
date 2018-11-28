@@ -100,7 +100,6 @@ public class HTMLFetcher {
 		Map<String, List<String>> response = HttpsFetcher.fetchURL(url);
 
 		if (isRedirect(response) && redirects > 0) {
-			System.out.println("Redirect?: " + response.get("Location").get(0));
 			return fetchHTML(response.get("Location").get(0), --redirects);
 		} else if (isHTML(response) && getStatusCode(response) == 200) {
 			return String.join(System.lineSeparator(), response.get("Content"));
