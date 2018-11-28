@@ -64,6 +64,7 @@ public class WebCrawler {
 
 					for (URL link : listOfLinks) {
 						if (!seenLinks.contains(link)) {
+
 							if (seenLinks.size() >= total) {
 								break;
 							}
@@ -73,6 +74,7 @@ public class WebCrawler {
 						}
 					}
 				}
+
 			} catch (IOException e) {
 				e.printStackTrace();
 

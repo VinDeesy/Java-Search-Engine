@@ -107,7 +107,7 @@ public class LinkParser {
 			}
 
 			if (url.toString().startsWith("http")) {
-				links.add(url);
+				links.add(clean(url));
 			}
 		}
 		return links;

@@ -37,10 +37,10 @@ public class Driver {
 		Path inputPath;
 
 		InvertedIndex index = new InvertedIndex();
-
+		boolean path = false;
 		if (parser.hasValue("-path")) {
 			inputPath = Paths.get(parser.getString("-path"));
-
+			path = true;
 			try {
 				if (threaded) {
 					InvertedIndexBuilder.addFileThreaded(inputPath, index, threads);
@@ -57,8 +57,18 @@ public class Driver {
 		}
 		InvertedThreaded threadedIndex = new InvertedThreaded();
 		int total = 50;
-		if (parser.hasValue("-limit")) {
-			total = Integer.parseInt(parser.getString("-limit"));
+		if (parser.hasFlag("-limit")) {
+			try {
+				if (parser.getValue("-limit") == null) {
+					total = 1;
+				} else {
+					total = Integer.parseInt(parser.getValue("-limit"));
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("number format exception");
+				total = 50;
+			}
+			System.out.println("limit is: " + total);
 		}
 		boolean URL = false;
 		if (parser.hasValue("-url")) {
@@ -85,8 +95,11 @@ public class Driver {
 
 			outputPath = parser.getPath("-index", Paths.get("index.json"));
 			try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);) {
-
-				threadedIndex.toJSON(outputPath);
+				if (path) {
+					index.toJSON(outputPath);
+				} else {
+					threadedIndex.toJSON(outputPath);
+				}
 
 			} catch (Exception e) {
 				System.out.println("Error io open file: " + outputPath.toString());

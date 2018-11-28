@@ -36,14 +36,24 @@ public class ArgumentParser {
 	 */
 	public void parse(String[] args) {
 
-		for (int i = 0; i < args.length; i++) {
-			if (isFlag(args[i])) {
-				if (i + 1 < args.length && isValue(args[i + 1])) {
+		int length = args.length;
+		if (length == 0)
+			return;
+
+		int i = 0;
+		for (i = 0; i < length - 1; i++) {
+			if (args[i].startsWith("-") && !args[i + 1].startsWith("-")) {
+				if (!map.containsKey(args[i]))
 					map.put(args[i], args[i + 1]);
-				} else {
+			} else if (args[i].startsWith("-") && args[i].startsWith("-")) {
+				if (!map.containsKey(args[i]))
 					map.put(args[i], null);
-				}
 			}
+		}
+
+		if (args[i].startsWith("-")) {
+			if (!map.containsKey(args[i]))
+				map.put(args[i], null);
 		}
 
 	}
@@ -216,6 +226,14 @@ public class ArgumentParser {
 		} catch (NullPointerException e) {
 			return defaultValue;
 		}
+	}
+
+	public String getValue(String flag) {
+		if (map.containsKey(flag) && map.get(flag) != null && hasValue(flag) == true) {
+
+			return map.get(flag);
+		}
+		return null;
 	}
 
 	@Override
