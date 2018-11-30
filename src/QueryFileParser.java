@@ -10,6 +10,11 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
+/*
+ * TODO Break out multi- versus single- threading into different classes.
+ * Keep single-threaded version as close to project 2 as possible.
+ */
+
 public class QueryFileParser {
 
 	private final TreeMap<String, ArrayList<Result>> results; // Data structure storing search results
@@ -75,11 +80,13 @@ public class QueryFileParser {
 		InvertedThreaded threadedIndex = new InvertedThreaded();
 		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);) {
 
+			// TODO Not thread-safe, create a stemmer in each task run() method.
 			SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 
 			String line = null;
 
 			while ((line = reader.readLine()) != null) {
+				// TODO Move almost everything inside this while loop to your task
 
 				String[] cleaned = TextParser.parse(line);
 
@@ -108,6 +115,11 @@ public class QueryFileParser {
 
 	}
 
+	/*
+	 * TODO Too many parameters... part of the issue is you need access to instance members
+	 * but you have a static nested class. Remove the static keyword, then you can access those directly.
+	 * String queryLine, boolean exact is all you need
+	 */
 	private static class QueryTask implements Runnable {
 
 		ArrayList<Result> resultList;

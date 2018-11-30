@@ -28,6 +28,8 @@ public class InvertedIndexBuilder {
 		}
 	}
 
+	// TODO Not synchronized. No Javadoc.
+	// TODO Restore this entire class back to the project 2 version.
 	public synchronized static void addFile(Path path, InvertedIndex index) throws IOException {
 
 		synchronized (index) {

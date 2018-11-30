@@ -58,6 +58,7 @@ public class ThreadedIndexBuilder {
 		}
 	}
 
+	// TODO A thread-safe inverted index, refactor name to "addFiles"
 	public static void addFileThreaded(Path root, InvertedIndex index, int threads) throws IOException {
 
 		WorkQueue queue = new WorkQueue(threads);
@@ -77,7 +78,7 @@ public class ThreadedIndexBuilder {
 	private static class FileTask implements Runnable {
 
 		Path path;
-		InvertedIndex index;
+		InvertedIndex index; // TODO thread-safe
 
 		public FileTask(Path path, InvertedIndex index) {
 			this.index = index;
@@ -86,6 +87,15 @@ public class ThreadedIndexBuilder {
 
 		public void run() {
 			try {
+				/*
+				 * TODO
+				 * Always slower to cause a lot of locking/unlocking
+				 * Want to use local data and a single large blocking add
+				 * 
+				 * InvertedIndex local = new InvertedIndex();
+				 * InvertedIndexBuilder.addFile(path, local);
+				 * index.addAll(local); <- create this method
+				 */
 				addFile(path, index);
 			} catch (IOException e) {
 				System.out.println("Error processing file");
