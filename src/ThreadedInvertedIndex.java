@@ -10,7 +10,7 @@ import java.util.TreeSet;
 /**
  * Data structure to store strings and their positions.
  */
-public class InvertedThreaded extends InvertedIndex {
+public class ThreadedInvertedIndex extends InvertedIndex {
 
 	/**
 	 * Stores a mapping of words to the positions the words were found.
@@ -21,7 +21,7 @@ public class InvertedThreaded extends InvertedIndex {
 	/**
 	 * Initializes the index.
 	 */
-	public InvertedThreaded() {
+	public ThreadedInvertedIndex() {
 		this.lock = new Lock();
 	}
 

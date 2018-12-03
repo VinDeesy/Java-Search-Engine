@@ -13,25 +13,6 @@ public class ThreadedIndexBuilder {
 		super();
 	}
 
-	/**
-	 * Given a root path, traverses the directory for all text files and adds the
-	 * contents of the file to the index
-	 *
-	 * @param root  root directory to traverse
-	 * @param index data structure to store words and locations
-	 * @return null
-	 * 
-	 */
-
-	public static void addFiles(Path root, InvertedIndex index) throws IOException {
-
-		ArrayList<Path> pathList = FileTraverser.traverse(root);
-
-		for (Path path : pathList) {
-			addFile(path, index);
-		}
-	}
-
 	public synchronized static void addFile(Path path, InvertedIndex index) throws IOException {
 
 		synchronized (index) {
@@ -59,7 +40,7 @@ public class ThreadedIndexBuilder {
 	}
 
 	// TODO A thread-safe inverted index, refactor name to "addFiles"
-	public static void addFileThreaded(Path root, InvertedIndex index, int threads) throws IOException {
+	public static void AddFiles(Path root, InvertedIndex index, int threads) throws IOException {
 
 		WorkQueue queue = new WorkQueue(threads);
 
@@ -88,13 +69,11 @@ public class ThreadedIndexBuilder {
 		public void run() {
 			try {
 				/*
-				 * TODO
-				 * Always slower to cause a lot of locking/unlocking
-				 * Want to use local data and a single large blocking add
+				 * TODO Always slower to cause a lot of locking/unlocking Want to use local data
+				 * and a single large blocking add
 				 * 
-				 * InvertedIndex local = new InvertedIndex();
-				 * InvertedIndexBuilder.addFile(path, local);
-				 * index.addAll(local); <- create this method
+				 * InvertedIndex local = new InvertedIndex(); InvertedIndexBuilder.addFile(path,
+				 * local); index.addAll(local); <- create this method
 				 */
 				addFile(path, index);
 			} catch (IOException e) {
