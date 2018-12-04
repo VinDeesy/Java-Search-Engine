@@ -15,7 +15,42 @@ public class Driver {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) {
-
+		/*
+		TODO
+		ArgumentParser parser = new ArgumentParser(args);
+		
+		ThreadedInvertedIndex threadedInvertedIndex;
+		InvertedIndex invertedIndex;
+		
+		QueryFileParserInterface queryParser;
+		
+		if -threads {
+			threadedInvertedIndex = new ThreadedInvertedIndex();
+			invertedIndex = threadedInvertedIndex;
+			
+			queryParser = new ThreadSafeQueryFileParser(threadedInvertedIndex, threads);
+		}
+		else {
+			invertedIndex = new InvertedIndex();
+			queryParser = new QueryParser(invertedIndex);
+		}
+		
+		if -path {
+			if (threadedInvertedIndex != null) {
+				call the threaded version
+			}
+			else {
+				single threaded
+			}
+		}
+		
+		if (-locations) {
+			invertedIndex....
+		}
+		
+		 */
+		
+		
 		if (args.length == 0) {
 			return;
 		}

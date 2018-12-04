@@ -10,11 +10,22 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
+/*
+ * TODO
+ * QueryFileParserInterface
+ * public void getQueries(Path path, boolean exact) throws IOException;
+ * public void printSearch(Path resultsFile) throws IOException;
+ * 
+ * 
+ */
+
 public class ThreadedQueryFileParser {
 
-	ThreadedInvertedIndex index;
+	ThreadedInvertedIndex index; // TODO private final
 	private final TreeMap<String, ArrayList<Result>> results;
-
+	// TODO private final int threads;
+	
+	// TODO Pass in the # of threads here so you don't have to in your search method below
 	public ThreadedQueryFileParser(ThreadedInvertedIndex index) {
 		this.results = new TreeMap<>();
 		this.index = index;
@@ -41,6 +52,8 @@ public class ThreadedQueryFileParser {
 				QueryTask task = new QueryTask(line, exact);
 				queue.execute(task);
 			}
+			
+			// TODO Move to finally
 			queue.finish();
 			queue.shutdown();
 
@@ -85,16 +98,22 @@ public class ThreadedQueryFileParser {
 			if (queryLine == "") {
 				return;
 			}
+			
+			/* TODO
+			synchronized (index) {
+				if (results.containsKey(queryLine)) {
+					return;
+				}
+			}*/
 
 			ArrayList<Result> resultList = null;
 
 			if (exact) {
-
 				resultList = index.searchExact(query);
-
 			} else {
 				resultList = index.searchPartial(query);
 			}
+			
 			synchronized (index) {
 
 				results.put(queryLine, resultList);
@@ -111,7 +130,7 @@ public class ThreadedQueryFileParser {
 	public void printSearch(Path resultsFile) throws IOException {
 
 		try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8)) {
-
+			// TODO synchronized (index) 
 			TreeJSONWriter.printSearch(results, writer);
 		}
 

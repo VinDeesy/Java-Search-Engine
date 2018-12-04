@@ -9,10 +9,12 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class ThreadedIndexBuilder {
 
+	// TODO Remove
 	public ThreadedIndexBuilder() {
 		super();
 	}
 
+	// TODO Remove
 	/**
 	 * Reads lines from a file, stems/cleans the line and adds the words to the
 	 * index
@@ -47,6 +49,8 @@ public class ThreadedIndexBuilder {
 
 	}
 
+	
+	// TODO Refactor to addFiles(...)
 	/**
 	 * Given a root path, traverses the directory for all text files and adds the
 	 * contents of the file to the index
@@ -60,6 +64,7 @@ public class ThreadedIndexBuilder {
 
 		WorkQueue queue = new WorkQueue(threads);
 
+		// TODO Move this into a try block
 		ArrayList<Path> pathList = FileTraverser.traverse(root);
 
 		for (Path path : pathList) {
@@ -68,6 +73,7 @@ public class ThreadedIndexBuilder {
 
 		}
 
+		// TODO Move into a finally block
 		queue.finish();
 		queue.shutdown();
 	}
@@ -82,7 +88,7 @@ public class ThreadedIndexBuilder {
 	 * 
 	 */
 	private static class FileTask implements Runnable {
-
+		// TODO private final
 		Path path;
 		ThreadedInvertedIndex index;
 
