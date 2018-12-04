@@ -51,7 +51,9 @@ public class Lock {
 
 		readers--;
 
-		this.notifyAll();
+		if (readers == 0) {
+			this.notifyAll();
+		}
 
 		/*
 		 * TODO Overnotification issue. Only call notifyAll when readers is 0.

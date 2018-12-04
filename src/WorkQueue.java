@@ -26,10 +26,7 @@ public class WorkQueue {
 	/** The default number of threads to use when not specified. */
 	public static final int DEFAULT = 5;
 
-	// TODO Initialize instance members in the constructor
-	private int pending = 0;
-	// TODO Add variables as necessary
-	// TODO Stop smoking cigarettes
+	private int pending;
 
 	/**
 	 * Starts a work queue with the default number of threads.
@@ -49,7 +46,7 @@ public class WorkQueue {
 	public WorkQueue(int threads) {
 		this.queue = new LinkedList<Runnable>();
 		this.workers = new PoolWorker[threads];
-
+		this.pending = 0;
 		this.shutdown = false;
 
 		// start the threads so they are waiting in the background
@@ -77,11 +74,11 @@ public class WorkQueue {
 	/*
 	 * TODO Need to use a consistent lock everywhere pending is accessed.
 	 * 
-	 * Easiest to use queue everywhere.
-	 * It is better to use "this" everywhere.
-	 * -- Create a incrementPending method and call it BEFORE the synchronized (queue) block in execute.
+	 * Easiest to use queue everywhere. It is better to use "this" everywhere. --
+	 * Create a incrementPending method and call it BEFORE the synchronized (queue)
+	 * block in execute.
 	 */
-	
+
 	public synchronized void decrementPending() {
 		assert pending > 0;
 		pending--;
@@ -141,7 +138,6 @@ public class WorkQueue {
 	 */
 	private class PoolWorker extends Thread {
 
-		// TODO Modify if necessary
 		@Override
 		public void run() {
 			Runnable r = null;

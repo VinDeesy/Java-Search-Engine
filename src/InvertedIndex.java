@@ -24,7 +24,6 @@ public class InvertedIndex {
 	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	public final TreeMap<String, Integer> locations;
 
-
 	/**
 	 * Initializes the index.
 	 */
@@ -54,6 +53,32 @@ public class InvertedIndex {
 
 		return result;
 
+	}
+
+	public void addAll(InvertedIndex local) {
+		for (String word : local.index.keySet()) {
+
+			if (this.index.containsKey(word) == false) {
+				this.index.put(word, local.index.get(word));
+			} else {
+				for (String path : local.index.get(word).keySet()) {
+					if (!this.index.get(word).keySet().contains(path)) {
+						this.index.get(word).put(path, local.index.get(word).get(path));
+					} else {
+						this.index.get(word).get(path).addAll(local.index.get(word).get(path));
+					}
+				}
+			}
+		}
+
+		for (String location : local.locations.keySet()) {
+			if (!this.locations.containsKey(location)) {
+				this.locations.put(location, local.locations.get(location));
+			} else {
+				this.locations.put(location, local.locations.get(location) + this.locations.get(location));
+			}
+
+		}
 	}
 
 	/**

@@ -23,16 +23,12 @@ public class ThreadedQueryFileParser {
 	public void ThreadedSearch(Path path, boolean exact, int threads) {
 
 		WorkQueue queue = new WorkQueue(threads);
-		ThreadedInvertedIndex threadedIndex = new ThreadedInvertedIndex();
+
 		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);) {
 
 			String line = null;
 
 			while ((line = reader.readLine()) != null) {
-
-//				if (queryLine == "") {
-//					continue;
-//				}
 
 				QueryTask task = new QueryTask(line, exact);
 				queue.execute(task);
@@ -77,14 +73,18 @@ public class ThreadedQueryFileParser {
 			}
 			String queryLine = String.join(" ", query);
 
+			if (queryLine == "") {
+				return;
+			}
+
 			ArrayList<Result> resultList = null;
 
 			if (exact) {
 
-				resultList = index.searchExactThreaded(query, index);
+				resultList = index.searchExactThreaded(query);
 
 			} else {
-				resultList = index.searchPartialThreaded(query, index);
+				resultList = index.searchPartialThreaded(query);
 			}
 			synchronized (index) {
 

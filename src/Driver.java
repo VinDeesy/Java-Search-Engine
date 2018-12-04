@@ -24,6 +24,7 @@ public class Driver {
 		parser.parse(args);
 
 		boolean threaded = false;
+		ThreadedInvertedIndex threadedInvertedIndex = new ThreadedInvertedIndex();
 		int threads = 5;
 		if (parser.hasFlag("-threads")) {
 			threaded = true;
@@ -42,7 +43,7 @@ public class Driver {
 
 			try {
 				if (threaded) {
-					InvertedIndexBuilder.addFileThreaded(inputPath, index, threads);
+					ThreadedIndexBuilder.AddFiles(inputPath, threadedInvertedIndex, threads);
 				} else {
 					InvertedIndexBuilder.addFiles(inputPath, index);
 				}
@@ -59,8 +60,11 @@ public class Driver {
 
 			Path outputPath = parser.getPath("-index", Paths.get("index.json"));
 			try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);) {
-
-				index.toJSON(outputPath);
+				if (threaded) {
+					threadedInvertedIndex.toJSON(outputPath);
+				} else {
+					index.toJSON(outputPath);
+				}
 
 			} catch (Exception e) {
 				System.out.println("Error io open file: " + outputPath.toString());
@@ -73,23 +77,26 @@ public class Driver {
 			Path locations = parser.getPath("-locations", Paths.get("locations.json"));
 
 			try {
-				index.locationJSON(locations);
+				if (threaded) {
+					threadedInvertedIndex.locationJSON(locations);
+				} else {
+					index.locationJSON(locations);
+				}
 			} catch (Exception e) {
 				System.out.println("There was an error retrieving the locations file");
 			}
 		}
 
 		QueryFileParser query = new QueryFileParser(index);
-
+		ThreadedQueryFileParser threadedQueryFileParser = new ThreadedQueryFileParser(threadedInvertedIndex);
 		if (parser.hasValue("-search")) {
 			Boolean exact = parser.hasFlag("-exact");
 			Path queryFile = Paths.get(parser.getString("-search"));
 			try {
 
 				if (threaded) {
-					query.ThreadedSearch(queryFile, exact, threads);
+					threadedQueryFileParser.ThreadedSearch(queryFile, exact, threads);
 				} else {
-
 					query.getQueries(queryFile, exact);
 				}
 
@@ -102,8 +109,11 @@ public class Driver {
 			Path resultsFile = parser.getPath("-results", Paths.get("results.json"));
 
 			try {
-
-				query.printSearch(resultsFile);
+				if (threaded) {
+					threadedQueryFileParser.printSearch(resultsFile);
+				} else {
+					query.printSearch(resultsFile);
+				}
 			} catch (Exception e) {
 				System.out.println("There was an error with printing the results");
 			}

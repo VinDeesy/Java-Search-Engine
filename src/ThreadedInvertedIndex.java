@@ -1,8 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 // TODO Better class names! Use your keywords!
@@ -22,6 +18,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 * Initializes the index.
 	 */
 	public ThreadedInvertedIndex() {
+		super();
 		this.lock = new Lock();
 	}
 
@@ -37,6 +34,15 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 		lock.lockReadWrite();
 		try {
 			return super.add(word, fileName, position);
+		} finally {
+			lock.unlockReadWrite();
+		}
+	}
+
+	public void addAll(ThreadedInvertedIndex local) {
+		lock.lockReadWrite();
+		try {
+			super.addAll(local);
 		} finally {
 			lock.unlockReadWrite();
 		}
@@ -133,41 +139,15 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 * @return TreeMap of results
 	 */
 
-	public ArrayList<Result> searchExactThreaded(TreeSet<String> query, InvertedIndex index) {
+	public ArrayList<Result> searchExactThreaded(TreeSet<String> query) {
+
+		lock.lockReadWrite();
 
 		try {
-
-			ArrayList<Result> results = new ArrayList<>();
-			Map<String, Result> lookup = new TreeMap<>();
-
-			for (String word : query) {
-
-				if (index.index.containsKey(word)) {
-
-					for (Entry<String, TreeSet<Integer>> file : index.index.get(word).entrySet()) {
-
-						if (!lookup.containsKey(file.getKey())) {
-							Result result = new Result(file.getValue().size(), file.getKey(),
-									index.locations.get(file.getKey()));
-							results.add(result);
-							lookup.put(file.getKey(), result);
-						} else {
-							lookup.get(file.getKey()).updateCount(file.getValue().size());
-						}
-
-					}
-
-				}
-
-			}
-			Collections.sort(results);
-			return results;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("There was an error with searching the index");
+			return super.searchExact(query);
+		} finally {
+			lock.unlockReadWrite();
 		}
-		return null;
 
 	}
 
@@ -177,50 +157,18 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 * @param queries query words to search our index
 	 * @return ArrayList of results
 	 */
-	public ArrayList<Result> searchPartialThreaded(TreeSet<String> query, InvertedIndex index) {
+	public ArrayList<Result> searchPartialThreaded(TreeSet<String> query) {
+
+		lock.lockReadWrite();
 
 		try {
-
-			ArrayList<Result> results = new ArrayList<>();
-			Map<String, Result> lookup = new TreeMap<>();
-
-			for (Entry<String, TreeMap<String, TreeSet<Integer>>> indexWord : index.index.entrySet()) {
-
-				for (String word : query) {
-
-					if (indexWord.getKey().startsWith(word)) {
-
-						for (Entry<String, TreeSet<Integer>> file : index.index.get(indexWord.getKey()).entrySet()) {
-
-							if (!lookup.containsKey(file.getKey())) {
-								Result result = new Result(file.getValue().size(), file.getKey(),
-										index.locations.get(file.getKey()));
-								results.add(result);
-								lookup.put(file.getKey(), result);
-							} else {
-								lookup.get(file.getKey()).updateCount(file.getValue().size());
-							}
-
-						}
-
-					}
-
-				}
-
-			}
-
-			Collections.sort(results);
-			return results;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("There was probably an error with the path");
-
+			return super.searchPartial(query);
+		} finally {
+			lock.unlockReadWrite();
 		}
-		return null;
 
 	}
-	
+
 	// TODO Need to make sure every public method is overridden and locked
 
 }

@@ -13,34 +13,32 @@ public class ThreadedIndexBuilder {
 		super();
 	}
 
-	public synchronized static void addFile(Path path, InvertedIndex index) throws IOException {
+	public static void addFile(Path path, ThreadedInvertedIndex index) throws IOException {
 
-		synchronized (index) {
+		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
 
-			try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
+		{
+			Integer position = 0;
+			SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+			String fileName = path.toString();
+			String line = null;
 
-			{
-				Integer position = 0;
-				SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-				String fileName = path.toString();
-				String line = null;
+			while ((line = reader.readLine()) != null) {
 
-				while ((line = reader.readLine()) != null) {
+				String[] cleaned = TextParser.parse(line);
 
-					String[] cleaned = TextParser.parse(line);
-
-					for (String string : cleaned) {
-						index.add(stemmer.stem(string).toString(), fileName, ++position);
-					}
-
+				for (String string : cleaned) {
+					System.out.println(string);
+					index.add(stemmer.stem(string).toString(), fileName, ++position);
 				}
 
 			}
+
 		}
+
 	}
 
-	// TODO A thread-safe inverted index, refactor name to "addFiles"
-	public static void AddFiles(Path root, InvertedIndex index, int threads) throws IOException {
+	public static void AddFiles(Path root, ThreadedInvertedIndex index, int threads) throws IOException {
 
 		WorkQueue queue = new WorkQueue(threads);
 
@@ -59,9 +57,9 @@ public class ThreadedIndexBuilder {
 	private static class FileTask implements Runnable {
 
 		Path path;
-		InvertedIndex index; // TODO thread-safe
+		ThreadedInvertedIndex index;
 
-		public FileTask(Path path, InvertedIndex index) {
+		public FileTask(Path path, ThreadedInvertedIndex index) {
 			this.index = index;
 			this.path = path;
 		}
@@ -75,7 +73,12 @@ public class ThreadedIndexBuilder {
 				 * InvertedIndex local = new InvertedIndex(); InvertedIndexBuilder.addFile(path,
 				 * local); index.addAll(local); <- create this method
 				 */
-				addFile(path, index);
+
+				InvertedIndex local = new InvertedIndex();
+				InvertedIndexBuilder.addFile(path, local);
+
+				index.addAll(local);
+
 			} catch (IOException e) {
 				System.out.println("Error processing file");
 			}
