@@ -55,6 +55,12 @@ public class InvertedIndex {
 
 	}
 
+	/**
+	 * Merges a local index into the main index
+	 *
+	 * @param local index to merge
+	 * @return none
+	 */
 	public void addAll(InvertedIndex local) {
 		for (String word : local.index.keySet()) {
 
@@ -184,7 +190,7 @@ public class InvertedIndex {
 	 * @param queries query words to search our index
 	 * @return ArrayList of results
 	 */
-	public ArrayList<Result> searchPartial(TreeSet<String> query) {
+	public ArrayList<Result> searchPartial(Collection<String> query) {
 
 		ArrayList<Result> results = new ArrayList<>();
 		Map<String, Result> lookup = new HashMap<>();

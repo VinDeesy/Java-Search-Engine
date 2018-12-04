@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.Collection;
 
 // TODO Better class names! Use your keywords!
 
@@ -8,11 +8,7 @@ import java.util.TreeSet;
  */
 public class ThreadedInvertedIndex extends InvertedIndex {
 
-	/**
-	 * Stores a mapping of words to the positions the words were found.
-	 */
-
-	Lock lock;
+	private final Lock lock;
 
 	/**
 	 * Initializes the index.
@@ -29,6 +25,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 * @param fileName file word is located in
 	 * @return true if this index did not already contain this word and position
 	 */
+	@Override
 	public boolean add(String word, String fileName, Integer position) {
 
 		lock.lockReadWrite();
@@ -39,7 +36,14 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 		}
 	}
 
-	public void addAll(ThreadedInvertedIndex local) {
+	/**
+	 * Merges a local index into the main index
+	 *
+	 * @param local index to merge
+	 * @return none
+	 */
+	@Override
+	public void addAll(InvertedIndex local) {
 		lock.lockReadWrite();
 		try {
 			super.addAll(local);
@@ -55,6 +59,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 * @param word word to look for
 	 * @return number of times the word was found
 	 */
+	@Override
 	public int count(String word) {
 
 		lock.lockReadOnly();
@@ -70,6 +75,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 *
 	 * @return number of words
 	 */
+	@Override
 	public int words() {
 		lock.lockReadOnly();
 		try {
@@ -85,6 +91,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 * @param word word to look for
 	 * @return true if the word is stored in the index
 	 */
+	@Override
 	public boolean contains(String word) {
 		lock.lockReadOnly();
 		try {
@@ -101,6 +108,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 * @param path path word is mapped to
 	 * @return true if the word is stored in the index in the path
 	 */
+	@Override
 	public boolean contains(String word, String path) {
 
 		lock.lockReadOnly();
@@ -119,6 +127,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 * @param position position in the file to look for
 	 * @return true if the word is stored in the index
 	 */
+	@Override
 	public boolean contains(String word, String path, int position) {
 
 		lock.lockReadOnly();
@@ -130,16 +139,14 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 
 	}
 
-	// TODO Should be the same as everything else
-	// TODO Use the same approach as before with lock/try/super/finally/unlock
 	/**
 	 * Searches the index for exact matches from a list of queries
 	 *
 	 * @param queries query words to search our index
 	 * @return TreeMap of results
 	 */
-
-	public ArrayList<Result> searchExactThreaded(TreeSet<String> query) {
+	@Override
+	public ArrayList<Result> searchExact(Collection<String> query) {
 
 		lock.lockReadWrite();
 
@@ -157,7 +164,8 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 * @param queries query words to search our index
 	 * @return ArrayList of results
 	 */
-	public ArrayList<Result> searchPartialThreaded(TreeSet<String> query) {
+	@Override
+	public ArrayList<Result> searchPartial(Collection<String> query) {
 
 		lock.lockReadWrite();
 
@@ -168,7 +176,5 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 		}
 
 	}
-
-	// TODO Need to make sure every public method is overridden and locked
 
 }

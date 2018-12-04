@@ -80,11 +80,11 @@ public class WorkQueue {
 	 */
 
 	public synchronized void decrementPending() {
-		assert pending > 0;
-		pending--;
-
-		if (pending == 0) {
-			this.notifyAll();
+		synchronized (queue) {
+			pending--;
+			if (pending <= 0) {
+				queue.notifyAll();
+			}
 		}
 	}
 
@@ -171,7 +171,7 @@ public class WorkQueue {
 				} finally {
 					synchronized (queue) {
 
-						pending--;
+						decrementPending();
 
 						if (pending == 0) {
 							queue.notifyAll();

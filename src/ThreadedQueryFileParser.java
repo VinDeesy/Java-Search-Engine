@@ -20,6 +20,14 @@ public class ThreadedQueryFileParser {
 		this.index = index;
 	}
 
+	/**
+	 * Multithreaded search of the index
+	 *
+	 * @param path    path query file
+	 * @param exact   exact or partial search
+	 * @param threads amount of threads to create
+	 * @return true if this index did not already contain this word and position
+	 */
 	public void ThreadedSearch(Path path, boolean exact, int threads) {
 
 		WorkQueue queue = new WorkQueue(threads);
@@ -43,11 +51,12 @@ public class ThreadedQueryFileParser {
 
 	}
 
-	/*
-	 * TODO Too many parameters... part of the issue is you need access to instance
-	 * members but you have a static nested class. Remove the static keyword, then
-	 * you can access those directly. String queryLine, boolean exact is all you
-	 * need
+	/**
+	 * Class of Tasks to search the index
+	 *
+	 * @param line  query line to parse
+	 * @param exact file word is located in
+	 * @return none
 	 */
 	private class QueryTask implements Runnable {
 
@@ -81,10 +90,10 @@ public class ThreadedQueryFileParser {
 
 			if (exact) {
 
-				resultList = index.searchExactThreaded(query);
+				resultList = index.searchExact(query);
 
 			} else {
-				resultList = index.searchPartialThreaded(query);
+				resultList = index.searchPartial(query);
 			}
 			synchronized (index) {
 
@@ -94,6 +103,11 @@ public class ThreadedQueryFileParser {
 
 	}
 
+	/**
+	 * Prints results to JSON format
+	 *
+	 * @return none
+	 */
 	public void printSearch(Path resultsFile) throws IOException {
 
 		try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8)) {

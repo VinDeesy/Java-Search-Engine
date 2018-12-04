@@ -10,11 +10,6 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
-/*
- * TODO Break out multi- versus single- threading into different classes.
- * Keep single-threaded version as close to project 2 as possible.
- */
-
 public class QueryFileParser {
 
 	private final TreeMap<String, ArrayList<Result>> results; // Data structure storing search results
@@ -74,6 +69,14 @@ public class QueryFileParser {
 
 	}
 
+	/**
+	 * Prints results from search in JSON format
+	 * 
+	 * @param resultsFile
+	 * @return none
+	 * @throws IOException
+	 * 
+	 */
 	public void printSearch(Path resultsFile) throws IOException {
 
 		try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8)) {

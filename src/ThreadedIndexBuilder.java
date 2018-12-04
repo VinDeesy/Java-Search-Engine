@@ -13,6 +13,15 @@ public class ThreadedIndexBuilder {
 		super();
 	}
 
+	/**
+	 * Reads lines from a file, stems/cleans the line and adds the words to the
+	 * index
+	 *
+	 * @param path  path to file
+	 * @param index index to add files to
+	 * @return null
+	 * 
+	 */
 	public static void addFile(Path path, ThreadedInvertedIndex index) throws IOException {
 
 		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
@@ -38,6 +47,15 @@ public class ThreadedIndexBuilder {
 
 	}
 
+	/**
+	 * Given a root path, traverses the directory for all text files and adds the
+	 * contents of the file to the index
+	 *
+	 * @param root  root directory to traverse
+	 * @param index data structure to store words and locations
+	 * @return null
+	 * 
+	 */
 	public static void AddFiles(Path root, ThreadedInvertedIndex index, int threads) throws IOException {
 
 		WorkQueue queue = new WorkQueue(threads);
@@ -54,6 +72,15 @@ public class ThreadedIndexBuilder {
 		queue.shutdown();
 	}
 
+	/**
+	 *
+	 * Builds a local index from a file and merges it with the main index
+	 *
+	 * @param path  path to file
+	 * @param index data structure to store words and locations
+	 * @return null
+	 * 
+	 */
 	private static class FileTask implements Runnable {
 
 		Path path;
@@ -66,13 +93,6 @@ public class ThreadedIndexBuilder {
 
 		public void run() {
 			try {
-				/*
-				 * TODO Always slower to cause a lot of locking/unlocking Want to use local data
-				 * and a single large blocking add
-				 * 
-				 * InvertedIndex local = new InvertedIndex(); InvertedIndexBuilder.addFile(path,
-				 * local); index.addAll(local); <- create this method
-				 */
 
 				InvertedIndex local = new InvertedIndex();
 				InvertedIndexBuilder.addFile(path, local);

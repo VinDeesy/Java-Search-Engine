@@ -28,7 +28,15 @@ public class InvertedIndexBuilder {
 		}
 	}
 
-	// TODO No Javadoc.
+	/**
+	 * Reads lines from a file, stems/cleans the line and adds the words to the
+	 * index
+	 *
+	 * @param path  path to file
+	 * @param index index to add files to
+	 * @return null
+	 * 
+	 */
 	public static void addFile(Path path, InvertedIndex index) throws IOException {
 
 		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
