@@ -20,7 +20,7 @@ public class InvertedIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-
+	// TODO make these private again
 	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	public final TreeMap<String, Integer> locations;
 

@@ -64,6 +64,9 @@ public class WorkQueue {
 	 */
 	// TODO Modify if necessary
 	public void execute(Runnable r) {
+		/* TODO
+		 * synchronized (this) { pending++; }
+		 */
 		synchronized (queue) {
 			pending++;
 			queue.addLast(r);
@@ -80,10 +83,10 @@ public class WorkQueue {
 	 */
 
 	public synchronized void decrementPending() {
-		synchronized (queue) {
+		synchronized (queue) { // TODO Remove
 			pending--;
 			if (pending <= 0) {
-				queue.notifyAll();
+				queue.notifyAll(); // TODO this.notifyAll
 			}
 		}
 	}
@@ -169,6 +172,7 @@ public class WorkQueue {
 					// catch runtime exceptions to avoid leaking threads
 					System.err.println("Warning: Work queue encountered an exception while running.");
 				} finally {
+					// TODO Just call decrementPending(); and remove everything else
 					synchronized (queue) {
 
 						decrementPending();

@@ -1,4 +1,6 @@
 
+// TODO Eclipse System Menu --> Window --> Show View --> Tasks 
+
 // TODO Remove old TODO comments from homework code (and fix exception handling)
 
 /**

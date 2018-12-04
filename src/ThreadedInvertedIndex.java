@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 import java.util.Collection;
 
+/*
+ * TODO All public methods should be overridden and locked
+ */
+
 // TODO Better class names! Use your keywords!
 
 /**
@@ -147,7 +151,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public ArrayList<Result> searchExact(Collection<String> query) {
-
+		// TODO Lock for read
 		lock.lockReadWrite();
 
 		try {
@@ -166,7 +170,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public ArrayList<Result> searchPartial(Collection<String> query) {
-
+		// TODO Lock for read
 		lock.lockReadWrite();
 
 		try {
