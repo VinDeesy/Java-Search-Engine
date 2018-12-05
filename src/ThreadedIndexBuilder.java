@@ -1,20 +1,13 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import opennlp.tools.stemmer.snowball.SnowballStemmer;
-
 public class ThreadedIndexBuilder {
 
-	// TODO Remove
 	public ThreadedIndexBuilder() {
-		super();
+
 	}
 
-	// TODO Remove
 	/**
 	 * Reads lines from a file, stems/cleans the line and adds the words to the
 	 * index
@@ -26,31 +19,10 @@ public class ThreadedIndexBuilder {
 	 */
 	public static void addFile(Path path, ThreadedInvertedIndex index) throws IOException {
 
-		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);)
-
-		{
-			Integer position = 0;
-			SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-			String fileName = path.toString();
-			String line = null;
-
-			while ((line = reader.readLine()) != null) {
-
-				String[] cleaned = TextParser.parse(line);
-
-				for (String string : cleaned) {
-					System.out.println(string);
-					index.add(stemmer.stem(string).toString(), fileName, ++position);
-				}
-
-			}
-
-		}
+		InvertedIndexBuilder.addFile(path, index);
 
 	}
 
-	
-	// TODO Refactor to addFiles(...)
 	/**
 	 * Given a root path, traverses the directory for all text files and adds the
 	 * contents of the file to the index
@@ -60,22 +32,25 @@ public class ThreadedIndexBuilder {
 	 * @return null
 	 * 
 	 */
-	public static void AddFiles(Path root, ThreadedInvertedIndex index, int threads) throws IOException {
+	public static void addFiles(Path root, ThreadedInvertedIndex index, int threads) throws IOException {
 
 		WorkQueue queue = new WorkQueue(threads);
 
-		// TODO Move this into a try block
-		ArrayList<Path> pathList = FileTraverser.traverse(root);
+		try {
+			ArrayList<Path> pathList = FileTraverser.traverse(root);
 
-		for (Path path : pathList) {
-			FileTask task = new FileTask(path, index);
-			queue.execute(task);
+			for (Path path : pathList) {
+				FileTask task = new FileTask(path, index);
+				queue.execute(task);
 
+			}
+		} catch (Exception e) {
+			System.out.println("Error processing file");
+		} finally {
+			queue.finish();
+			queue.shutdown();
 		}
 
-		// TODO Move into a finally block
-		queue.finish();
-		queue.shutdown();
 	}
 
 	/**
@@ -88,9 +63,9 @@ public class ThreadedIndexBuilder {
 	 * 
 	 */
 	private static class FileTask implements Runnable {
-		// TODO private final
-		Path path;
-		ThreadedInvertedIndex index;
+
+		private final Path path;
+		private final ThreadedInvertedIndex index;
 
 		public FileTask(Path path, ThreadedInvertedIndex index) {
 			this.index = index;

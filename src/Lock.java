@@ -1,8 +1,4 @@
 
-// TODO Eclipse System Menu --> Window --> Show View --> Tasks 
-
-// TODO Remove old TODO comments from homework code (and fix exception handling)
-
 /**
  * A simple custom lock that allows simultaneously read operations, but
  * disallows simultaneously write and read/write operations.
@@ -30,13 +26,12 @@ public class Lock {
 	 * @throws InterruptedException
 	 */
 	public synchronized void lockReadOnly() {
-		// TODO
 
 		while (writers > 0) {
 			try {
 				this.wait();
 			} catch (Exception e) {
-				// TODO: handle exception
+				System.out.println("Error locking read only");
 			}
 		}
 
@@ -49,7 +44,6 @@ public class Lock {
 	 * necessary.
 	 */
 	public synchronized void unlockReadOnly() {
-		// TODO
 
 		readers--;
 
@@ -57,9 +51,6 @@ public class Lock {
 			this.notifyAll();
 		}
 
-		/*
-		 * TODO Overnotification issue. Only call notifyAll when readers is 0.
-		 */
 	}
 
 	/**
@@ -69,13 +60,12 @@ public class Lock {
 	 * @throws InterruptedException
 	 */
 	public synchronized void lockReadWrite() {
-		// TODO
 
 		while (readers > 0 || writers > 0) {
 			try {
 				this.wait();
 			} catch (Exception e) {
-				// TODO: handle exception
+				System.out.println("Error locking read/write");
 			}
 		}
 
@@ -88,7 +78,6 @@ public class Lock {
 	 * necessary.
 	 */
 	public synchronized void unlockReadWrite() {
-		// TODO
 
 		--writers;
 

@@ -10,7 +10,7 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
-public class QueryFileParser {
+public class QueryFileParser implements QueryFileParserInterface {
 
 	private final TreeMap<String, ArrayList<Result>> results; // Data structure storing search results
 	private final InvertedIndex index;

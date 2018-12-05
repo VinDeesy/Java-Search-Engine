@@ -1,12 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collection;
 
-/*
- * TODO All public methods should be overridden and locked
- */
-
-// TODO Better class names! Use your keywords!
-
 /**
  * Data structure to store strings and their positions.
  */
@@ -151,13 +145,13 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public ArrayList<Result> searchExact(Collection<String> query) {
-		// TODO Lock for read
-		lock.lockReadWrite();
+
+		lock.lockReadOnly();
 
 		try {
 			return super.searchExact(query);
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 
 	}
@@ -170,13 +164,13 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public ArrayList<Result> searchPartial(Collection<String> query) {
-		// TODO Lock for read
-		lock.lockReadWrite();
+
+		lock.lockReadOnly();
 
 		try {
 			return super.searchPartial(query);
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 
 	}

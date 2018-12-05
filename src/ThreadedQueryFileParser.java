@@ -10,25 +10,16 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
-/*
- * TODO
- * QueryFileParserInterface
- * public void getQueries(Path path, boolean exact) throws IOException;
- * public void printSearch(Path resultsFile) throws IOException;
- * 
- * 
- */
+public class ThreadedQueryFileParser implements QueryFileParserInterface {
 
-public class ThreadedQueryFileParser {
-
-	ThreadedInvertedIndex index; // TODO private final
+	private final ThreadedInvertedIndex index;
 	private final TreeMap<String, ArrayList<Result>> results;
-	// TODO private final int threads;
-	
-	// TODO Pass in the # of threads here so you don't have to in your search method below
-	public ThreadedQueryFileParser(ThreadedInvertedIndex index) {
+	private final int threads;
+
+	public ThreadedQueryFileParser(ThreadedInvertedIndex index, int threads) {
 		this.results = new TreeMap<>();
 		this.index = index;
+		this.threads = threads;
 	}
 
 	/**
@@ -39,7 +30,7 @@ public class ThreadedQueryFileParser {
 	 * @param threads amount of threads to create
 	 * @return true if this index did not already contain this word and position
 	 */
-	public void ThreadedSearch(Path path, boolean exact, int threads) {
+	public void getQueries(Path path, boolean exact) {
 
 		WorkQueue queue = new WorkQueue(threads);
 
@@ -52,14 +43,13 @@ public class ThreadedQueryFileParser {
 				QueryTask task = new QueryTask(line, exact);
 				queue.execute(task);
 			}
-			
-			// TODO Move to finally
-			queue.finish();
-			queue.shutdown();
 
 		} catch (Exception e) {
 			System.out.println("There was an error processing the query file");
 
+		} finally {
+			queue.finish();
+			queue.shutdown();
 		}
 
 	}
@@ -95,16 +85,11 @@ public class ThreadedQueryFileParser {
 			}
 			String queryLine = String.join(" ", query);
 
-			if (queryLine == "") {
-				return;
-			}
-			
-			/* TODO
 			synchronized (index) {
-				if (results.containsKey(queryLine)) {
+				if (results.containsKey(queryLine) || query.isEmpty()) {
 					return;
 				}
-			}*/
+			}
 
 			ArrayList<Result> resultList = null;
 
@@ -113,7 +98,7 @@ public class ThreadedQueryFileParser {
 			} else {
 				resultList = index.searchPartial(query);
 			}
-			
+
 			synchronized (index) {
 
 				results.put(queryLine, resultList);
@@ -130,8 +115,9 @@ public class ThreadedQueryFileParser {
 	public void printSearch(Path resultsFile) throws IOException {
 
 		try (BufferedWriter writer = Files.newBufferedWriter(resultsFile, StandardCharsets.UTF_8)) {
-			// TODO synchronized (index) 
-			TreeJSONWriter.printSearch(results, writer);
+			synchronized (index) {
+				TreeJSONWriter.printSearch(results, writer);
+			}
 		}
 
 	}
