@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class ThreadedIndexBuilder {
 
+	// TODO Remove
 	public ThreadedIndexBuilder() {
 
 	}

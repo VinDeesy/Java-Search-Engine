@@ -48,7 +48,7 @@ public class InvertedIndex {
 		if (result) {
 
 			locations.put(fileName, Math.max(locations.getOrDefault(fileName, 0), position));
-			locations.put(fileName, position);
+			locations.put(fileName, position); // TODO Remove?
 		}
 
 		return result;
@@ -78,6 +78,7 @@ public class InvertedIndex {
 		}
 
 		for (String location : local.locations.keySet()) {
+			// TODO Use Math.max instead of adding together the counts
 			if (!this.locations.containsKey(location)) {
 				this.locations.put(location, local.locations.get(location));
 			} else {

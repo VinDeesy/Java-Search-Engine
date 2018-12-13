@@ -107,7 +107,7 @@ public class WorkQueue {
 				try {
 					this.wait();
 				} catch (InterruptedException e) {
-
+					// TODO Exception handling
 				}
 			}
 		}

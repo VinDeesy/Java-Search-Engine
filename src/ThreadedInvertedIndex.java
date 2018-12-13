@@ -1,6 +1,12 @@
 import java.util.ArrayList;
 import java.util.Collection;
 
+/*
+ * TODO Missing a few public methods
+ * Need to override all of the public methods and lock appropriately
+ * to make this generally thread-safe
+ */
+
 /**
  * Data structure to store strings and their positions.
  */

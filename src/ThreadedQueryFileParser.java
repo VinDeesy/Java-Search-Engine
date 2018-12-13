@@ -63,6 +63,7 @@ public class ThreadedQueryFileParser implements QueryFileParserInterface {
 	 */
 	private class QueryTask implements Runnable {
 
+		// TODO Use keywords
 		String line;
 		boolean exact;
 
