@@ -23,7 +23,7 @@ public class Driver {
 		QueryFileParserInterface queryParser;
 
 		boolean threaded = false;
-		int threads = 0;
+		int threads = 1;
 
 		if (parser.hasFlag("-threads")) {
 			threadedInvertedIndex = new ThreadedInvertedIndex();

@@ -1,36 +1,55 @@
 import java.util.LinkedList;
 
 /**
- * A custom lock that allows for multiple readers to access the object at the
- * same time; however only allows one writer in the system at a time.
+ * A simple work queue implementation based on the IBM developerWorks article by
+ * Brian Goetz. It is up to the user of this class to keep track of whether
+ * there is any pending work remaining.
+ *
+ * @see <a href=
+ *      "http://www.ibm.com/developerworks/library/j-jtp0730/index.html">Java
+ *      Theory and Practice: Thread Pools and Work Queues</a>
  */
 public class WorkQueue {
 
-	private final PoolWorker workers[];
-	private final LinkedList<Runnable> tasks;
+	/**
+	 * Pool of worker threads that will wait in the background until work is
+	 * available.
+	 */
+	private final PoolWorker[] workers;
+
+	/** Queue of pending work requests. */
+	private final LinkedList<Runnable> queue;
+
+	/** Used to signal the queue should be shutdown. */
 	private volatile boolean shutdown;
+
+	/** The default number of threads to use when not specified. */
 	public static final int DEFAULT = 5;
 
 	private int pending;
 
 	/**
-	 * Creates a default instance of a WorkQueue with 5 threads
+	 * Starts a work queue with the default number of threads.
+	 *
+	 * @see #WorkQueue(int)
 	 */
 	public WorkQueue() {
 		this(DEFAULT);
 	}
 
 	/**
-	 * Creates an instance of a WorkQueue with a given number of threads
-	 * 
-	 * @param threads the desired number of threads
+	 * Starts a work queue with the specified number of threads.
+	 *
+	 * @param threads number of worker threads; should be greater than 1
 	 */
+	// TODO Modify if necessary
 	public WorkQueue(int threads) {
-		workers = new PoolWorker[threads];
-		tasks = new LinkedList<Runnable>();
-		shutdown = false;
-		pending = 0;
+		this.queue = new LinkedList<Runnable>();
+		this.workers = new PoolWorker[threads];
+		this.pending = 0;
+		this.shutdown = false;
 
+		// start the threads so they are waiting in the background
 		for (int i = 0; i < threads; i++) {
 			this.workers[i] = new PoolWorker();
 			this.workers[i].start();
@@ -38,96 +57,128 @@ public class WorkQueue {
 	}
 
 	/**
-	 * Adds a new task (something that implements Runnable) to the end of the queue
-	 * 
-	 * @param r the Runnable task to be added
+	 * Adds a work request to the queue. A thread will process this request when
+	 * available.
+	 *
+	 * @param r work request (in the form of a {@link Runnable} object)
 	 */
+
 	public void execute(Runnable r) {
+
 		increment();
-		synchronized (tasks) {
-			tasks.addLast(r);
-			tasks.notifyAll();
+		synchronized (queue) {
+
+			queue.addLast(r);
+			queue.notifyAll();
 		}
 	}
 
 	/**
-	 * Increase the count of the pending variable by 1
+	 * Increases the amount of work to be done by 1
 	 */
-	private synchronized void increment() {
-		pending++;
+	private void increment() {
+		synchronized (this) {
+			pending++;
+		}
+
 	}
 
 	/**
-	 * Decreases the count of the pending variable by 1 and notifies all waiting
-	 * threads when work is complete
+	 * Decreases the amount of work to be done by 1 if pending is 0, all threads are
+	 * notified
 	 */
-	private synchronized void decrement() {
-		pending--;
+	public synchronized void decrementPending() {
 
+		pending--;
 		if (pending <= 0) {
 			this.notifyAll();
 		}
+
 	}
 
 	/**
-	 * Finished threads will wait here until all work is complete before shutting
-	 * down
+	 * Waits for all pending work to be finished.
 	 */
 	public void finish() {
-		try {
-			synchronized (this) {
-				while (pending > 0) {
+
+		synchronized (this) {
+
+			while (pending > 0) {
+				try {
 					this.wait();
+				} catch (InterruptedException e) {
+
 				}
 			}
-		} catch (Exception e) {
-			System.out.println("interrupt occured while waiting to finish work");
 		}
 	}
 
 	/**
-	 * Shuts down all active threads in a pool
+	 * Asks the queue to shutdown. Any unprocessed work will not be finished, but
+	 * threads in-progress will not be interrupted.
 	 */
+
 	public void shutdown() {
+		// safe to do unsynchronized due to volatile keyword
 		shutdown = true;
 
-		synchronized (this.tasks) {
-			tasks.notifyAll();
+		synchronized (this.queue) {
+			queue.notifyAll();
 		}
 	}
 
 	/**
-	 * A single thread that handles a series of Runnable tasks from the WorkQueue
+	 * Returns the number of worker threads being used by the work queue.
+	 *
+	 * @return number of worker threads
+	 */
+
+	public int size() {
+		return workers.length;
+	}
+
+	/**
+	 * Waits until work is available in the work queue. When work is found, will
+	 * remove the work from the queue and run it. If a shutdown is detected, will
+	 * exit instead of grabbing new work from the queue. These threads will continue
+	 * running in the background until a shutdown is requested.
 	 */
 	private class PoolWorker extends Thread {
+
 		@Override
 		public void run() {
-			Runnable task = null;
+			Runnable r = null;
 
 			while (true) {
-				synchronized (tasks) {
-					while (tasks.isEmpty() && !shutdown) {
+				synchronized (queue) {
+					while (queue.isEmpty() && !shutdown) {
 						try {
-							tasks.wait();
-						} catch (InterruptedException e) {
-							System.out.println("Thread interrupted by system");
+							queue.wait();
+						} catch (InterruptedException ex) {
+							System.err.println("Warning: Work queue interrupted.");
 							Thread.currentThread().interrupt();
 						}
 					}
 
+					// exit while for one of two reasons:
+					// (a) queue has work, or (b) shutdown has been called
+
 					if (shutdown) {
 						break;
 					} else {
-						task = tasks.removeFirst();
+						r = queue.removeFirst();
 					}
 				}
 
 				try {
-					task.run();
-				} catch (RuntimeException e) {
-					System.out.println("Error occured while running task");
+					r.run();
+				} catch (RuntimeException ex) {
+					// catch runtime exceptions to avoid leaking threads
+					System.err.println("Warning: Work queue encountered an exception while running.");
 				} finally {
-					decrement();
+
+					decrementPending();
+
 				}
 			}
 		}
